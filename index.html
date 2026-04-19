@@ -3,32 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PLAYA SRL - Financial Dashboard</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Second Brain con Obsidian e Claude — Guida Completa</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #1a365d;
-            --secondary-color: #2d3748;
-            --accent-color: #3182ce;
-            --success-color: #38a169;
-            --warning-color: #ed8936;
-            --danger-color: #e53e3e;
-            --light-bg: #f7fafc;
-            --white: #ffffff;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --navy: #0f1f3d;
+            --gold: #b8973a;
+            --cream: #faf8f5;
+            --light-gray: #e8e5e0;
+            --dark-text: #1a1a1a;
+            --accent-red: #8b3a3a;
         }
 
         * {
@@ -38,1564 +22,1479 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            min-height: 100vh;
-            color: var(--gray-800);
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--cream) 0%, #f5f1ed 100%);
+            color: var(--dark-text);
             line-height: 1.6;
         }
 
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, var(--navy) 0%, #0a1220 100%);
+            color: white;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .logo .accent { color: var(--gold); }
+
+        .header-title {
+            flex: 1;
+            font-size: 1.2rem;
+            font-weight: 500;
+            opacity: 0.95;
+        }
+
+        .progress-bar {
+            width: 100px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gold);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* LAYOUT */
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 0;
+            min-height: calc(100vh - 100px);
         }
 
-        /* Header Semplificato */
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 2rem;
+        /* SIDEBAR */
+        .sidebar {
+            background: white;
+            border-right: 1px solid var(--light-gray);
+            padding: 2rem 0;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+            position: sticky;
+            top: 100px;
         }
 
-        .header h1 {
-            font-size: 2.5rem;
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .nav-section {
+            padding: 0 1rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
             font-weight: 700;
-            color: var(--white);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--navy);
+            margin: 1.5rem 0 0.5rem 0;
+            padding: 0 1rem;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--dark-text);
+            text-decoration: none;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            background: var(--cream);
+            border-left-color: var(--gold);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: rgba(184, 151, 58, 0.1);
+            border-left-color: var(--gold);
+            font-weight: 600;
+            color: var(--navy);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            padding: 3rem;
+            background: var(--cream);
+            overflow-y: auto;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        section:nth-child(1) { animation-delay: 0s; }
+        section:nth-child(2) { animation-delay: 0.1s; }
+        section:nth-child(3) { animation-delay: 0.2s; }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--navy);
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--gold);
+            display: inline-block;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin: 1.5rem 0 0.75rem 0;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+            color: #333;
+        }
+
+        .intro {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-left: 4px solid var(--gold);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* CALLOUTS */
+        .callout {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            border-radius: 4px;
+            border-left: 4px solid;
+            background: white;
+        }
+
+        .callout.warning {
+            border-left-color: #d97706;
+            background: #fef3c7;
+        }
+
+        .callout.tip {
+            border-left-color: var(--gold);
+            background: #fef7ed;
+        }
+
+        .callout.info {
+            border-left-color: var(--navy);
+            background: #e6eef7;
+        }
+
+        .callout-title {
+            font-weight: 700;
             margin-bottom: 0.5rem;
-            letter-spacing: -0.025em;
-        }
-
-        .header .subtitle {
-            font-size: 1.125rem;
-            color: rgba(255, 255, 255, 0.8);
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-        }
-
-        .company-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--white);
-            letter-spacing: 0.025em;
-        }
-
-        /* Controls Eleganti */
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            background: var(--white);
-            padding: 1.5rem 2rem;
-            border-radius: 16px;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-200);
-        }
-
-        .year-selector {
-            display: flex;
-            background: var(--gray-100);
-            border-radius: 12px;
-            padding: 0.25rem;
-        }
-
-        .year-tab {
-            padding: 0.75rem 1.5rem;
-            margin: 0;
-            border: none;
-            background: transparent;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.875rem;
-            transition: all 0.2s ease;
-            color: var(--gray-600);
-            min-width: 80px;
-        }
-
-        .year-tab.active {
-            background: var(--accent-color);
-            color: var(--white);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .year-tab:hover:not(.active) {
-            background: var(--gray-200);
-            color: var(--gray-800);
-        }
-
-        .export-btn {
-            background: linear-gradient(135deg, var(--success-color), #48bb78);
-            color: var(--white);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: var(--shadow-sm);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
-        .export-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
+        .callout-icon { font-size: 1.2rem; }
+
+        ul, ol {
+            margin: 1rem 0 1rem 1.5rem;
+            line-height: 1.8;
         }
 
-        .export-btn:disabled {
-            background: var(--gray-300);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* KPI Cards Compatte */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .kpi-card {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 1.25rem;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-200);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .kpi-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent-color);
-        }
-
-        .kpi-card.revenue::before { background: var(--success-color); }
-        .kpi-card.costs::before { background: var(--danger-color); }
-        .kpi-card.profit::before { background: var(--warning-color); }
-        .kpi-card.margin::before { background: var(--accent-color); }
-
-        .kpi-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .kpi-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .kpi-icon {
-            font-size: 1.5rem;
-            opacity: 0.7;
-        }
-
-        .kpi-value {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 0.25rem;
-            letter-spacing: -0.025em;
-        }
-
-        .kpi-label {
-            font-size: 0.8rem;
-            color: var(--gray-600);
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        /* Layout Principale */
-        .main-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .chart-section {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .chart-container {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-200);
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chart-wrapper {
-            flex: 1;
-            position: relative;
-            min-height: 300px;
-        }
-
-        .chart-wrapper canvas {
-            position: absolute !important;
-            top: 0;
-            left: 0;
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .chart-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .chart-subtitle {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-            margin-top: 0.25rem;
-        }
-
-        /* Sidebar Insights */
-        .sidebar {
-            display: grid;
-            gap: 2rem;
-        }
-
-        .insights-card {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-200);
-        }
-
-        .insights-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .insights-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .insight-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 0.75rem;
-            background: var(--gray-50);
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .insight-icon {
-            font-size: 1.25rem;
-            margin-top: 0.125rem;
-        }
-
-        .insight-text {
-            flex: 1;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            color: var(--gray-700);
-        }
-
-        /* Seasonal Analysis */
-        .seasonal-section {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-200);
-            margin-bottom: 2rem;
-        }
-
-        .seasonal-header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .seasonal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
+        li {
             margin-bottom: 0.5rem;
-        }
-
-        .seasonal-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .season-card {
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-200);
-        }
-
-        .season-card.spring {
-            background: linear-gradient(135deg, #d4edda, #a3d5b8);
-            color: var(--gray-800);
-        }
-
-        .season-card.summer {
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            color: var(--gray-800);
-        }
-
-        .season-card.autumn {
-            background: linear-gradient(135deg, #f8d7da, #fab1a0);
-            color: var(--gray-800);
-        }
-
-        .season-card.winter {
-            background: linear-gradient(135deg, #d6eaf8, #74b9ff);
-            color: var(--white);
-        }
-
-        .season-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .season-months {
-            font-size: 0.875rem;
-            opacity: 0.8;
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-        }
-
-        .season-metrics {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .metric-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 1rem;
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-        }
-
-        .metric-label {
-            font-size: 0.75rem;
-            opacity: 0.8;
-            margin-bottom: 0.25rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .metric-value {
-            font-size: 1rem;
-            font-weight: 700;
-        }
-
-        /* Data Table */
-        .data-table {
-            background: var(--white);
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: var(--shadow-md);
-            border: 1px solid var(--gray-200);
-            margin-bottom: 2rem;
-            overflow: hidden;
-        }
-
-        .table-header {
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .table-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .table-responsive {
-            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--gray-200);
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
 
         th {
-            background: var(--gray-50);
+            background: var(--navy);
+            color: white;
+            padding: 1rem;
+            text-align: left;
             font-weight: 600;
-            color: var(--gray-700);
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
         }
 
         td {
-            font-size: 0.875rem;
-            color: var(--gray-700);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--light-gray);
         }
 
-        .number {
-            text-align: right;
+        tr:hover {
+            background: var(--cream);
+        }
+
+        code {
+            font-family: 'DM Mono', monospace;
+            background: var(--navy);
+            color: #fff;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.9rem;
+        }
+
+        pre {
+            background: var(--navy);
+            color: #fff;
+            padding: 1.5rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .diagram {
+            margin: 2rem 0;
+            display: flex;
+            justify-content: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .checklist {
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: white;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist li:hover {
+            background: var(--cream);
+            transform: translateX(4px);
+        }
+
+        .checklist input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--gold);
+        }
+
+        .checklist input[type="checkbox"]:checked + span {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--navy);
+            margin-bottom: 0.5rem;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             font-weight: 600;
-            font-variant-numeric: tabular-nums;
+            color: var(--navy);
+            padding: 1rem;
+            background: white;
+            border: 1px solid var(--light-gray);
+            border-radius: 4px;
+            margin: 1rem 0;
+            user-select: none;
+            transition: all 0.3s ease;
         }
 
-        .positive { color: var(--success-color); }
-        .negative { color: var(--danger-color); }
-
-        /* Loading Animation */
-        .loading-spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--white);
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .collapsible:hover {
+            background: var(--cream);
         }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .collapsible.active {
+            background: rgba(184, 151, 58, 0.1);
+            border-color: var(--gold);
         }
 
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .controls {
-                flex-direction: column;
-                gap: 1rem;
-            }
+        .collapsible-icon {
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            display: none;
+            padding: 1.5rem;
+            background: var(--cream);
+            border-left: 3px solid var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .collapsible.active + .collapsible-content {
+            display: block;
+            animation: expandDown 0.3s ease-out;
+        }
+
+        @keyframes expandDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .grid-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 4px;
+            border-left: 4px solid var(--gold);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        footer {
+            background: var(--navy);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            font-size: 0.9rem;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 1rem;
-            }
-            
-            .kpi-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.75rem;
-            }
-            
-            .seasonal-grid {
                 grid-template-columns: 1fr;
             }
-            
-            .header {
-                padding: 1.5rem;
+
+            .sidebar {
+                display: none;
             }
-            
-            .header h1 {
-                font-size: 2rem;
+
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.3rem; }
+            main { padding: 1.5rem; }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
             }
+
+            .logo { font-size: 1.2rem; }
         }
 
-        /* Fade In Animation */
-        .fade-in {
-            animation: fadeIn 0.6s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+        .text-center { text-align: center; }
+        .mt { margin-top: 2rem; }
+        .mb { margin-bottom: 2rem; }
+        .highlight { background: #fef7ed; padding: 2px 6px; }
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-content">
+            <div>
+                <div class="logo">BDZ<span class="accent">.</span>BRAIN</div>
+                <div class="header-title">Guida Completa — Second Brain con Obsidian e Claude</div>
+                <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
+            </div>
+        </div>
+    </header>
+
     <div class="container">
-        <!-- Header Semplificato -->
-        <div class="header fade-in">
-            <h1>Financial Dashboard</h1>
-            <div class="subtitle">Analisi Ricavi, Costi e Marginalità</div>
-            <div class="company-name">PLAYA SRL</div>
-        </div>
+        <aside class="sidebar">
+            <nav>
+                <div class="nav-section-title">📚 Guida</div>
+                <div class="nav-section">
+                    <a class="nav-link active" onclick="scrollToSection(0)">Perché questo sistema</a>
+                    <a class="nav-link" onclick="scrollToSection(1)">Architettura</a>
+                    <a class="nav-link" onclick="scrollToSection(2)">Preparazione tecnica</a>
+                    <a class="nav-link" onclick="scrollToSection(3)">Logica di funzionamento</a>
+                    <a class="nav-link" onclick="scrollToSection(4)">Ruolo dell'utente</a>
+                    <a class="nav-link" onclick="scrollToSection(5)">Best practice</a>
+                    <a class="nav-link" onclick="scrollToSection(6)">Esempio pratico</a>
+                </div>
+                <div class="nav-section-title" style="margin-top: 2rem;">🔧 Strumenti</div>
+                <div class="nav-section">
+                    <a class="nav-link" href="#obsidian-setup">Obsidian Setup</a>
+                    <a class="nav-link" href="#claude-config">Claude Config</a>
+                    <a class="nav-link" href="#checklist">Checklist</a>
+                </div>
+            </nav>
+        </aside>
 
-        <!-- Controls -->
-        <div class="controls fade-in">
-            <div class="year-selector">
-                <button class="year-tab active" onclick="selectYear(2024)">2024</button>
-                <button class="year-tab" onclick="selectYear(2023)">2023</button>
-                <button class="year-tab" onclick="selectYear(2022)">2022</button>
-            </div>
-            <button id="exportBtn" class="export-btn" onclick="generatePDF()">
-                <span>📊</span>
-                <span id="exportBtnText">Esporta Report</span>
-            </button>
-        </div>
+        <main>
+            <!-- SEZIONE 1 -->
+            <section id="section-0">
+                <h1>Parte 1 — Perché Creare Questo Sistema</h1>
 
-        <!-- KPI Cards -->
-        <div id="kpi-section" class="fade-in">
-            <!-- Generato dinamicamente -->
-        </div>
+                <div class="intro">
+                    Un professionista accumula nel tempo una grande quantità di materiali dispersi in cartelle diverse, email e appunti. Il problema non è solo conservarli, ma ritrovarli, collegarli e riutilizzarli quando servono.
+                </div>
 
-        <!-- Main Grid -->
-        <div class="main-grid fade-in">
-            <!-- Charts Section -->
-            <div class="chart-section">
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">Andamento Ricavi vs Costi</div>
-                            <div class="chart-subtitle">Confronto mensile delle performance</div>
-                        </div>
+                <h2>1.1 L'esigenza iniziale</h2>
+                <p>Immagina uno studio professionale o un'azienda dopo anni di attività:</p>
+                <ul>
+                    <li>📁 <strong>Cartelle Windows</strong> con file sparsi senza logica</li>
+                    <li>📧 <strong>Email importanti</strong> difficili da ritrovare</li>
+                    <li>📄 <strong>PDF di riferimento</strong> salvati senza criterio</li>
+                    <li>📝 <strong>Appunti personali</strong> su riunioni e decisioni</li>
+                    <li>🔗 <strong>Nessun collegamento</strong> tra clienti, progetti e concetti</li>
+                    <li>❓ <strong>Dipendenza dalla memoria</strong> di chi conosce la storia</li>
+                </ul>
+
+                <h2>1.2 Problemi del metodo tradizionale</h2>
+                <div class="grid">
+                    <div class="grid-item">
+                        <div class="card-title">❌ Informazioni disperse</div>
+                        <p>Lo stesso cliente ha dati in Word, PDF, email, CRM. Nessun collegamento tra loro.</p>
                     </div>
-                    <div class="chart-wrapper">
-                        <canvas id="revenueChart"></canvas>
+                    <div class="grid-item">
+                        <div class="card-title">❌ Ricerca lenta</div>
+                        <p>Per trovare un'analisi fatta 6 mesi fa, si perde tempo a cercare tra cartelle.</p>
+                    </div>
+                    <div class="grid-item">
+                        <div class="card-title">❌ Conoscenza volatile</div>
+                        <p>Se una persona se ne va, la conoscenza va persa. Non è documentata.</p>
+                    </div>
+                    <div class="grid-item">
+                        <div class="card-title">❌ Assenza di pattern</div>
+                        <p>È impossibile vedere relazioni tra clienti, settori, problemi ricorrenti.</p>
                     </div>
                 </div>
 
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">Marginalità Mensile</div>
-                            <div class="chart-subtitle">Percentuale di margine per mese</div>
-                        </div>
+                <h2>1.3 Obiettivo del sistema</h2>
+                <p>L'obiettivo <span class="highlight">non è creare un semplice archivio</span>, ma costruire un ambiente dove la conoscenza sia:</p>
+                <ul>
+                    <li>✅ <strong>Raccolta ordinatamente</strong> in un unico luogo</li>
+                    <li>✅ <strong>Collegata semanticamente</strong> (cliente → progetti → concetti)</li>
+                    <li>✅ <strong>Aggiornata continuamente</strong> senza sforzo manuale</li>
+                    <li>✅ <strong>Interrogabile intelligentemente</strong> via Claude</li>
+                    <li>✅ <strong>Consultabile visivamente</strong> via Obsidian</li>
+                    <li>✅ <strong>Controllata dall'utente</strong> (mai fuori controllo)</li>
+                </ul>
+
+                <h2>1.4 Risultato atteso</h2>
+                <div class="callout info">
+                    <div class="callout-title"><span class="callout-icon">ℹ️</span> Visione finale</div>
+                    <p>Quando il sistema è maturo, il professionista può fare domande come:</p>
+                    <ul style="margin-top: 0.5rem;">
+                        <li><strong>"Quali clienti hanno problemi di cash flow?"</strong> → Claude legge il vault e risponde con dati</li>
+                        <li><strong>"Quali procedure usiamo per questo processo?"</strong> → Obsidian mostra il link a processi correlati</li>
+                        <li><strong>"Che cosa abbiamo imparato da questo tipo di cliente?"</strong> → Claude analizza i pattern</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- SEZIONE 2 -->
+            <section id="section-1">
+                <h2 style="margin-top: 0;">Parte 2 — Architettura del Sistema</h2>
+
+                <p>Il sistema è composto da 4 strati che lavorano insieme:</p>
+
+                <h3>2.1 I quattro strati</h3>
+
+                <div class="diagram">
+                    <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 500px;">
+                        <rect x="50" y="20" width="500" height="70" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
+                        <text x="300" y="55" font-size="18" font-weight="bold" text-anchor="middle" fill="#0f1f3d">1. Cloud Storage — Infrastruttura</text>
+                        <text x="300" y="75" font-size="12" text-anchor="middle" fill="#555">Sincronizzazione, backup, accesso ovunque</text>
+
+                        <rect x="50" y="110" width="500" height="70" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
+                        <text x="300" y="145" font-size="18" font-weight="bold" text-anchor="middle" fill="#b8973a">2. Obsidian — Conserva &amp; Naviga</text>
+                        <text x="300" y="165" font-size="12" text-anchor="middle" fill="#555">Editor locale, visualizzazione grafica, ricerca full-text</text>
+
+                        <rect x="50" y="200" width="500" height="70" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
+                        <text x="300" y="235" font-size="18" font-weight="bold" text-anchor="middle" fill="#0f1f3d">3. Claude — Elabora &amp; Organizza</text>
+                        <text x="300" y="255" font-size="12" text-anchor="middle" fill="#555">Legge, sintetizza, struttura, suggerisce azioni</text>
+
+                        <rect x="50" y="290" width="500" height="70" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
+                        <text x="300" y="325" font-size="18" font-weight="bold" text-anchor="middle" fill="#b8973a">4. Skill &amp; Automazione — Ordina Periodicamente</text>
+                        <text x="300" y="345" font-size="12" text-anchor="middle" fill="#555">Lint, ingest, close — manutenzione automatica</text>
+
+                        <path d="M 300 90 L 300 110" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 300 180 L 300 200" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 300 270 L 300 290" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#666"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3>2.2 Cos'è Obsidian</h3>
+                <p><strong>Obsidian</strong> è un editor di file markdown locale, connesso a una cartella del PC.</p>
+                <div class="callout tip">
+                    <div class="callout-title"><span class="callout-icon">💡</span> Ruolo di Obsidian</div>
+                    <p><strong>Non è un software cloud.</strong> È un'interfaccia locale che legge i tuoi file markdown da disco. La vera risorsa è la cartella di file — Obsidian è solo la finestra.</p>
+                </div>
+                <p><strong>Cosa puoi fare con Obsidian:</strong></p>
+                <ul>
+                    <li>✏️ Scrivere e editare note in markdown</li>
+                    <li>🔗 Creare link tra note (<code>[[nota-1]]</code>)</li>
+                    <li>🔍 Cercare full-text tra tutti i file</li>
+                    <li>📊 Visualizzare grafi di collegamento (quali note si citano)</li>
+                    <li>📁 Organizzare file in cartelle e tag</li>
+                </ul>
+
+                <h3>2.3 Cos'è Claude</h3>
+                <p><strong>Claude</strong> è un AI che puoi usare come agente per leggere il vault, organizzarlo e rispondere a domande.</p>
+                <div class="callout tip">
+                    <div class="callout-title"><span class="callout-icon">💡</span> Ruolo di Claude</div>
+                    <p>Claude <strong>non modifica il vault da solo.</strong> Tu gli dai istruzioni (skill), lui legge i file e suggerisce azioni o risponde domande. Tu decidi cosa applicare.</p>
+                </div>
+
+                <h3>2.4 Cloud Storage come infrastruttura</h3>
+                <p>Il vault vive in una cartella sincronizzata (OneDrive, Google Drive, Dropbox) perché:</p>
+                <table>
+                    <tr>
+                        <th>Vantaggio</th>
+                        <th>Motivo</th>
+                    </tr>
+                    <tr>
+                        <td>✅ <strong>Sincronizzato</strong></td>
+                        <td>Stesso vault su PC, tablet, altro device</td>
+                    </tr>
+                    <tr>
+                        <td>✅ <strong>Backup automatico</strong></td>
+                        <td>Il provider tiene copie; non perdi dati se il PC si rompe</td>
+                    </tr>
+                    <tr>
+                        <td>✅ <strong>Condivisibile</strong></td>
+                        <td>Puoi dare accesso ad altri (colleghi, collaboratori)</td>
+                    </tr>
+                    <tr>
+                        <td>✅ <strong>Locale e cloud</strong></td>
+                        <td>Obsidian lavora offline, sincronizza quando sei connesso</td>
+                    </tr>
+                </table>
+
+                <h3>2.5 MECE come principio organizzativo</h3>
+                <p><strong>MECE = Mutually Exclusive, Collectively Exhaustive</strong> (mutualmente esclusivo, collettivamente esaustivo).</p>
+                <p>Significa: ogni nota ha <strong>una sola categoria</strong>, e <strong>tutte le note sono categorizzate.</strong></p>
+                <div class="card">
+                    <div class="card-title">Esempio di categorizzazione MECE:</div>
+                    <p><strong>❌ Male:</strong></p>
+                    <ul>
+                        <li>Note per "Clienti"</li>
+                        <li>Note per "Progetti"</li>
+                        <li>Note sparse senza categoria (BUCO!)</li>
+                        <li>Una nota su un cliente che è anche un progetto (DUPLICE!)</li>
+                    </ul>
+                    <p><strong>✅ Bene:</strong></p>
+                    <ul>
+                        <li>01-Inbox (nuovi input)</li>
+                        <li>02-Processi (procedure studio)</li>
+                        <li>03-Risorse (knowledge base)</li>
+                        <li>04-Clienti (info cliente + storia)</li>
+                        <li>05-Progetti (attivi)</li>
+                        <li>06-Archivi (completati)</li>
+                    </ul>
+                </div>
+
+            </section>
+
+            <!-- SEZIONE 3 -->
+            <section id="section-2">
+                <h2 style="margin-top: 0;">Parte 3 — Preparazione Tecnica</h2>
+
+                <h3>3.1 Step 0: Prerequisiti</h3>
+                <ul>
+                    <li>✅ Cloud storage installato (OneDrive, Google Drive o Dropbox)</li>
+                    <li>✅ Account cloud attivo</li>
+                    <li>✅ Claude Code accessibile (claude.ai/code o app desktop)</li>
+                    <li>✅ Python 3.8+ installato (per automazione opzionale)</li>
+                </ul>
+
+                <h3>3.2 Passo 1: Crea la cartella del vault</h3>
+                <div class="callout info">
+                    <div class="callout-title"><span class="callout-icon">ℹ️</span> Percorso consigliato (OneDrive)</div>
+                    <p><code>C:\Users\[TuoNome]\OneDrive\Second_Brain_Claude</code></p>
+                </div>
+                <p>Assicurati che il cloud storage stia sincronizzando questa cartella:</p>
+                <pre>1. OneDrive (icona in basso a destra) → Impostazioni
+2. Account → Scegli le cartelle da sincronizzare
+3. ☑ Spunta "Second_Brain_Claude"
+4. Applica</pre>
+
+                <h3>3.3 Passo 2: Struttura iniziale</h3>
+                <p>Crea questa struttura di cartelle:</p>
+                <pre>Second_Brain_Claude/
+├── 01-Inbox/                 # Nuovi input (ancora non categorizzati)
+├── 02-Processi/              # Procedure e workflow
+├── 03-Risorse/               # Knowledge base, articoli, riferimenti
+├── 04-Clienti/               # Schede cliente + storia
+├── 05-Progetti/              # Progetti attivi
+├── 06-Archivi/               # Completati, archiviati
+├── _metadata/                # File di controllo
+│   ├── index.md              # Elenco centrale
+│   ├── CLAUDE.md             # Istruzioni per Claude
+│   └── log.md                # Log cumulativo
+└── _reports/                 # Report di lint/ingest/close</pre>
+
+                <h3>3.4 Passo 3: File di controllo</h3>
+                <p>Crea questi 3 file nella cartella <code>_metadata/</code>:</p>
+
+                <div class="collapsible" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-icon">▼</span>
+                    <strong>📄 index.md — Elenco centrale del vault</strong>
+                </div>
+                <div class="collapsible-content">
+                    <pre># Second Brain Index
+
+## 📍 Struttura
+
+- **01-Inbox** — Nuovi input non categorizzati
+- **02-Processi** — Procedure e workflow
+- **03-Risorse** — Conoscenza, articoli, benchmark
+- **04-Clienti** — Schede cliente
+- **05-Progetti** — Progetti attivi
+- **06-Archivi** — Completati
+
+## 🏷️ Tags principali
+
+- #cliente-[nome]
+- #progetto-[codice]
+- #processo-[nome]
+- #risorsa-[tema]
+
+## 📊 Statistiche
+
+- Total files: 0
+- Last updated: [data]
+- Health score: TBD
+
+---
+Maintained by Claude + Skill second-brain-vault</pre>
+                </div>
+
+                <div class="collapsible" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-icon">▼</span>
+                    <strong>⚙️ CLAUDE.md — Istruzioni per Claude</strong>
+                </div>
+                <div class="collapsible-content">
+                    <pre># Istruzioni per Claude — Second Brain
+
+## Ruolo
+
+Sei l'agente che aiuta a mantenere ordinato e aggiornato il Second Brain.
+
+## Compiti
+
+1. **LINT**: Diagnostica
+   - Trova pagine orfane (non linkate)
+   - Rileva duplicati (titoli simili)
+   - Verifica link rotti
+
+2. **INGEST**: Indicizzazione
+   - Processa file nuovi
+   - Normalizza frontmatter (title, category, tags)
+   - Aggiorna index.md
+
+3. **CLOSE**: Reporting
+   - Calcola statistiche del vault
+   - Verifica MECE coverage
+   - Genera health report
+
+## Categorie MECE
+
+- 01-Inbox
+- 02-Processi
+- 03-Risorse
+- 04-Clienti
+- 05-Progetti
+- 06-Archivi
+
+Nessun file deve rimanere fuori da queste categorie.
+
+## Comandi
+
+/second-brain lint
+/second-brain ingest
+/second-brain close
+
+---
+Last updated: [data]</pre>
+                </div>
+
+                <div class="collapsible" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-icon">▼</span>
+                    <strong>📋 log.md — Log cumulativo</strong>
+                </div>
+                <div class="collapsible-content">
+                    <pre># Second Brain — Log
+
+Registro di tutte le operazioni eseguite sul vault.
+
+## Formato
+
+[YYYY-MM-DD HH:MM] COMANDO | RISULTATO | NOTE
+
+## Esempi
+
+[2025-04-19 06:00] LINT | 3 orfane trovate | "old-draft", "test-page", "archived-2023"
+[2025-04-19 06:15] INGEST | 5 file processati | categoria auto-assegnata a 2
+[2025-04-20 06:30] CLOSE | Health 82/100 | MECE 95% coverage
+
+---
+Maintained by automation scripts</pre>
+                </div>
+
+                <h3>3.5 Passo 4: Installa Obsidian</h3>
+                <ol>
+                    <li>Scarica da <strong>obsidian.md</strong></li>
+                    <li>Installa normalmente</li>
+                    <li>Apri Obsidian → "Open folder as vault"</li>
+                    <li>Seleziona la cartella del vault creata al passo 1</li>
+                    <li>Fatto! Ora Obsidian monitora la cartella</li>
+                </ol>
+
+                <h3>3.6 Passo 5: Setup automazione (opzionale ma consigliato)</h3>
+                <p>Se vuoi che Claude operi automaticamente a intervalli regolari, puoi configurare un task scheduler (Windows) o cron job (Mac/Linux):</p>
+                <pre># Windows — Task Scheduler
+# Crea task che esegue ogni giorno alle 06:00:
+# Programma: python
+# Argomenti: C:\Users\[TuoNome]\second-brain-cli.py lint
+
+# Mac/Linux — crontab
+# 0 6 * * * python3 ~/second-brain-cli.py lint</pre>
+
+                <div class="callout warning">
+                    <div class="callout-title"><span class="callout-icon">⚠️</span> Attenzione</div>
+                    <p>Su Windows, esegui il setup del Task Scheduler con <strong>privilegi amministratore</strong>.</p>
+                </div>
+
+            </section>
+
+            <!-- SEZIONE 4 -->
+            <section id="section-3">
+                <h2 style="margin-top: 0;">Parte 4 — Logica di Funzionamento</h2>
+
+                <h3>4.1 Il flusso Utente → Obsidian → Claude → Aggiornamento</h3>
+
+                <div class="diagram">
+                    <svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 600px;">
+                        <rect x="50" y="20" width="150" height="80" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
+                        <text x="125" y="50" font-size="14" font-weight="bold" text-anchor="middle" fill="#0f1f3d">1. UTENTE</text>
+                        <text x="125" y="70" font-size="11" text-anchor="middle" fill="#555">Aggiunge file, email,</text>
+                        <text x="125" y="85" font-size="11" text-anchor="middle" fill="#555">appunti in 01-Inbox/</text>
+
+                        <rect x="250" y="20" width="150" height="80" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
+                        <text x="325" y="50" font-size="14" font-weight="bold" text-anchor="middle" fill="#b8973a">2. OBSIDIAN</text>
+                        <text x="325" y="70" font-size="11" text-anchor="middle" fill="#555">Mostra i file nuovi,</text>
+                        <text x="325" y="85" font-size="11" text-anchor="middle" fill="#555">permette collegamento</text>
+
+                        <rect x="450" y="20" width="150" height="80" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
+                        <text x="525" y="50" font-size="14" font-weight="bold" text-anchor="middle" fill="#0f1f3d">3. CLAUDE</text>
+                        <text x="525" y="70" font-size="11" text-anchor="middle" fill="#555">Legge, categorizza,</text>
+                        <text x="525" y="85" font-size="11" text-anchor="middle" fill="#555">suggerisce link</text>
+
+                        <path d="M 200 60 L 250 60" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <path d="M 400 60 L 450 60" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                        <path d="M 450 100 Q 325 250 250 100" stroke="#b8973a" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead-gold)"/>
+
+                        <g id="operations">
+                            <rect x="50" y="150" width="180" height="100" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4"/>
+                            <text x="140" y="175" font-size="14" font-weight="bold" text-anchor="middle" fill="#d97706">🔍 LINT</text>
+                            <text x="140" y="195" font-size="11" text-anchor="middle" fill="#333">Diagnostica quotidiana</text>
+                            <text x="140" y="210" font-size="10" text-anchor="middle" fill="#666">• Trova orfane</text>
+                            <text x="140" y="225" font-size="10" text-anchor="middle" fill="#666">• Rileva duplicati</text>
+                            <text x="140" y="240" font-size="10" text-anchor="middle" fill="#666">• Verifica link</text>
+
+                            <rect x="260" y="150" width="180" height="100" fill="#dbeafe" stroke="#0f1f3d" stroke-width="2" rx="4"/>
+                            <text x="350" y="175" font-size="14" font-weight="bold" text-anchor="middle" fill="#0f1f3d">📥 INGEST</text>
+                            <text x="350" y="195" font-size="11" text-anchor="middle" fill="#333">Indicizzazione</text>
+                            <text x="350" y="210" font-size="10" text-anchor="middle" fill="#666">• Processa file nuovi</text>
+                            <text x="350" y="225" font-size="10" text-anchor="middle" fill="#666">• Normalizza metadata</text>
+                            <text x="350" y="240" font-size="10" text-anchor="middle" fill="#666">• Aggiorna indici</text>
+
+                            <rect x="470" y="150" width="180" height="100" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
+                            <text x="560" y="175" font-size="14" font-weight="bold" text-anchor="middle" fill="#b8973a">📊 CLOSE</text>
+                            <text x="560" y="195" font-size="11" text-anchor="middle" fill="#333">Report settimanale</text>
+                            <text x="560" y="210" font-size="10" text-anchor="middle" fill="#666">• Statistiche vault</text>
+                            <text x="560" y="225" font-size="10" text-anchor="middle" fill="#666">• MECE coverage</text>
+                            <text x="560" y="240" font-size="10" text-anchor="middle" fill="#666">• Health score</text>
+                        </g>
+
+                        <text x="140" y="280" font-size="10" text-anchor="middle" fill="#999" font-style="italic">Ogni giorno</text>
+                        <text x="350" y="280" font-size="10" text-anchor="middle" fill="#999" font-style="italic">A metà settimana</text>
+                        <text x="560" y="280" font-size="10" text-anchor="middle" fill="#999" font-style="italic">Fine settimana</text>
+
+                        <rect x="50" y="320" width="600" height="140" fill="white" stroke="#999" stroke-width="1" stroke-dasharray="5,5" rx="4"/>
+                        <text x="350" y="340" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">📂 Output nel vault</text>
+
+                        <text x="60" y="365" font-size="11" fill="#333"><tspan font-weight="bold">_reports/</tspan></text>
+                        <text x="80" y="380" font-size="10" fill="#666">• lint-report-YYYY-MM-DD.md</text>
+                        <text x="80" y="395" font-size="10" fill="#666">• health-report-YYYY-MM-DD.md</text>
+
+                        <text x="350" y="365" font-size="11" fill="#333"><tspan font-weight="bold">_metadata/</tspan></text>
+                        <text x="370" y="380" font-size="10" fill="#666">• index.md (aggiornato)</text>
+                        <text x="370" y="395" font-size="10" fill="#666">• log.md (cumulativo)</text>
+
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#666"/>
+                            </marker>
+                            <marker id="arrowhead-gold" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                                <polygon points="0 0, 10 5, 0 10" fill="#b8973a"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h3>4.2 Come Claude legge le istruzioni</h3>
+                <p>Quando invochi <code>/second-brain lint</code> in Claude, Claude accede a:</p>
+                <ol>
+                    <li>📄 <strong>SKILL.md</strong> — Istruzioni generali su cosa significa "lint"</li>
+                    <li>⚙️ <strong>CLAUDE.md</strong> — Categorie MECE e regole del tuo vault specifico</li>
+                    <li>📂 <strong>I file del vault</strong> — Legge struttura, file, link</li>
+                    <li>🔍 <strong>Esegue diagnostica</strong> e genera report</li>
+                </ol>
+
+                <h3>4.3 Cosa è automatico vs manuale</h3>
+                <table>
+                    <tr>
+                        <th>Operazione</th>
+                        <th>Chi la fa</th>
+                        <th>Quando</th>
+                        <th>Controllato da</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Aggiungere file</strong></td>
+                        <td>UTENTE</td>
+                        <td>Quando vuole</td>
+                        <td>Manuale</td>
+                    </tr>
+                    <tr>
+                        <td><strong>LINT (diagnostica)</strong></td>
+                        <td>CLAUDE</td>
+                        <td>Ogni giorno 06:00</td>
+                        <td>Automatico (Task Scheduler)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>INGEST (indicizza)</strong></td>
+                        <td>CLAUDE</td>
+                        <td>A metà settimana</td>
+                        <td>Automatico</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CLOSE (report)</strong></td>
+                        <td>CLAUDE</td>
+                        <td>Fine settimana</td>
+                        <td>Automatico</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Decidere se applicare i suggerimenti</strong></td>
+                        <td>UTENTE</td>
+                        <td>Dopo aver visto il report</td>
+                        <td>Manuale</td>
+                    </tr>
+                </table>
+
+            </section>
+
+            <!-- SEZIONE 5 -->
+            <section id="section-4">
+                <h2 style="margin-top: 0;">Parte 5 — Ruolo dell'Utente: Cosa Fare Nei Vari Momenti</h2>
+
+                <h3>5.1 Al mattino (quando accendi il PC)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <span>Cloud storage sincronizzato? (icona in basso a destra)</span></li>
+                    <li><input type="checkbox"> <span>Se Obsidian era aperto, aggiorna (<code>F5</code>) per vedere file nuovi</span></li>
+                    <li><input type="checkbox"> <span>Leggi il <code>_metadata/log.md</code> — che ha fatto Claude stanotte?</span></li>
+                </ul>
+
+                <h3>5.2 Durante il lavoro (quando arriva un documento nuovo)</h3>
+                <p><strong>Scenario:</strong> Ricevi una email con un PDF importante, oppure completi un'analisi per un cliente.</p>
+                <ol>
+                    <li>📥 <strong>Aggiungi il file in 01-Inbox/</strong>
+                        <pre>01-Inbox/
+├── email-cliente-xyz-2025-04-19.txt
+└── analisi-cash-flow-bianchi.pdf</pre>
+                    </li>
+                    <li>📝 <strong>Se è markdown, aggiungi frontmatter minimo:</strong>
+                        <pre>---
+title: Analisi Cash Flow — Cliente Bianchi
+category: 04-Clienti
+tags: [cliente-bianchi, cash-flow, analisi]
+created: 2025-04-19
+---
+
+Contenuto della nota...</pre>
+                    </li>
+                    <li>🔗 <strong>Se è correlato ad altro, aggiungi link:</strong>
+                        <pre>## Collegato a
+- [[Cliente Bianchi — Scheda principale]]
+- [[Processo: Analisi Cash Flow]]
+- [[Risorsa: Benchmark settore di riferimento]]</pre>
+                    </li>
+                    <li>💾 <strong>Salva</strong> (Obsidian auto-sincronizza sul cloud)</li>
+                </ol>
+
+                <h3>5.3 Quando vuoi interrogare il sistema (1-2 volte al giorno)</h3>
+                <p><strong>Scenario:</strong> Hai una domanda, cerchi un pattern, o vuoi un'analisi.</p>
+                <div class="card">
+                    <div class="card-title">Domanda 1: Ricerca veloce in Obsidian</div>
+                    <p><code>Ctrl+Shift+F</code> → cerca keyword → vedi tutti i file correlati</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">Domanda 2: Chiedi a Claude</div>
+                    <p>Apri Claude e scrivi:</p>
+                    <pre>"Nel mio Second Brain, dammi un riepilogo
+di tutti i clienti con problemi di liquidità
+identificati negli ultimi 3 mesi."</pre>
+                    <p>Claude legge i file rilevanti del vault e risponde con dati concreti.</p>
+                </div>
+
+                <h3>5.4 Quando leggi un report di Claude</h3>
+                <p>Claude genera report automaticamente. Tu leggi e decidi:</p>
+                <div class="grid">
+                    <div class="grid-item">
+                        <div class="card-title">📄 Lint Report</div>
+                        <p><code>_reports/lint-report-YYYY-MM-DD.md</code></p>
+                        <p>Vedi problemi: 3 file orfani, 1 duplicato, 2 link rotti.</p>
+                        <p><strong>Azione:</strong> Decidi se mergerli, archiviarli, o lasciarli.</p>
                     </div>
-                    <div class="chart-wrapper">
-                        <canvas id="marginChart"></canvas>
+                    <div class="grid-item">
+                        <div class="card-title">📊 Health Report</div>
+                        <p><code>_reports/health-report-YYYY-MM-DD.md</code></p>
+                        <p>Statistiche: 82/100, MECE 95%, 7 file inattivi.</p>
+                        <p><strong>Azione:</strong> Se salute bassa, applica suggerimenti.</p>
                     </div>
                 </div>
-            </div>
 
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="insights-card">
-                    <div class="insights-header">
-                        <span>💡</span>
-                        <div class="insights-title">Key Insights</div>
+                <h3>5.5 Quando vuoi correggere o integrare manualmente</h3>
+                <p><strong>Scenario:</strong> Leggi il report di Claude e vedi che due file vanno mergiati.</p>
+                <ol>
+                    <li>🔍 Apri i due file in Obsidian</li>
+                    <li>🔗 Copia contenuto rilevante da uno all'altro</li>
+                    <li>🗑️ Elimina il duplicato (o spostalo in 06-Archivi/)</li>
+                    <li>💾 Salva</li>
+                    <li>⏳ Attendi prossimo CLOSE per vedere il MECE coverage migliorato</li>
+                </ol>
+
+                <h3>5.6 A fine giornata (opzionale, 5 minuti)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <span>Cloud storage sincronizzato? (spegni PC con tutto salvato)</span></li>
+                    <li><input type="checkbox"> <span>Se hai aggiunto molti file, chiedi a Claude un feedback rapido sulla struttura</span></li>
+                </ul>
+
+                <h3>5.7 Manutenzione periodica (settimanale)</h3>
+                <ul>
+                    <li>📋 <strong>Inizio settimana:</strong> Leggi lint report della settimana precedente</li>
+                    <li>🔄 <strong>Metà settimana:</strong> Applica correzioni segnalate</li>
+                    <li>📊 <strong>Fine settimana:</strong> Leggi health report</li>
+                </ul>
+
+            </section>
+
+            <!-- SEZIONE 6 -->
+            <section id="section-5">
+                <h2 style="margin-top: 0;">Parte 6 — Best Practice</h2>
+
+                <h3>6.1 Come nominare i file</h3>
+                <div class="callout info">
+                    <div class="callout-title"><span class="callout-icon">ℹ️</span> Schema di naming</div>
+                    <pre>[Categoria]—[Argomento]—[Data se necessario]
+
+Esempi:
+✅ Cliente—Bianchi—Scheda Base
+✅ Processo—Fatturazione—Procedura 2025
+✅ Risorsa—Benchmark Settore Manifatturiero
+✅ Progetto—Nuova App—Sprint 3
+❌ note  (troppo generico)
+❌ Copia di file_v2_finale_VERO (caos)</pre>
+                </div>
+
+                <h3>6.2 Struttura minima di una nota</h3>
+                <div class="card">
+                    <div class="card-title">Template markdown minimo</div>
+                    <pre>---
+title: [Titolo descrittivo]
+category: [01-Inbox | 02-Processi | 03-Risorse | 04-Clienti | 05-Progetti | 06-Archivi]
+tags: [tag1, tag2, tag3]
+created: YYYY-MM-DD
+modified: YYYY-MM-DD
+---
+
+# [Titolo]
+
+## Sommario
+[1-2 righe che descrivono il contenuto]
+
+## Contenuto principale
+
+[Corpo della nota]
+
+## Link correlati
+- [[Nota collegata 1]]
+- [[Nota collegata 2]]
+
+## Note
+[Osservazioni finali]
+
+---
+Last updated: [data]</pre>
+                </div>
+
+                <h3>6.3 Quando lavorare manualmente vs delegare a Claude</h3>
+                <table>
+                    <tr>
+                        <th>Compito</th>
+                        <th>Chi lo fa</th>
+                        <th>Perché</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Aggiungere nuovi file</strong></td>
+                        <td>TU (manuale)</td>
+                        <td>Solo tu sai cosa è importante e dove va</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Creare link tra note</strong></td>
+                        <td>TU (manuale)</td>
+                        <td>Richiede comprensione semantica umana</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Diagnosticare anomalie</strong></td>
+                        <td>CLAUDE (automatico)</td>
+                        <td>LINT trova orfane e duplicati in secondi</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Indicizzare</strong></td>
+                        <td>CLAUDE (automatico)</td>
+                        <td>INGEST normalizza metadata ripetitivo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Decidere se applicare suggerimenti</strong></td>
+                        <td>TU (manuale)</td>
+                        <td>Solo tu hai il contesto per dire sì/no</td>
+                    </tr>
+                </table>
+
+                <h3>6.4 Errori tipici da evitare</h3>
+                <div class="grid">
+                    <div class="grid-item">
+                        <div class="card-title">❌ Non categorizzare i file</div>
+                        <p>Se lascio tutto in 01-Inbox/, il vault diventa caos. MECE fallisce.</p>
+                        <p><strong>✅ Soluzione:</strong> Dopo 1 settimana, sposta file in categoria corretta.</p>
                     </div>
-                    <div id="insights-content">
-                        <!-- Generato dinamicamente -->
+                    <div class="grid-item">
+                        <div class="card-title">❌ Usare lo stesso file per due concetti</div>
+                        <p>Es: "Cliente Bianchi + Progetto Alpha" nello stesso file. Viola MECE.</p>
+                        <p><strong>✅ Soluzione:</strong> Due file separati, collegati con link.</p>
+                    </div>
+                    <div class="grid-item">
+                        <div class="card-title">❌ Non sincronizzare il cloud</div>
+                        <p>Se il cloud non sincronizza, Obsidian vede file vecchi, Claude vede dati stantii.</p>
+                        <p><strong>✅ Soluzione:</strong> Controlla l'icona del cloud storage ogni mattina.</p>
+                    </div>
+                    <div class="grid-item">
+                        <div class="card-title">❌ Ignorare i report di Claude</div>
+                        <p>Claude segnala "3 file orfani", tu ignori. Il vault degrada.</p>
+                        <p><strong>✅ Soluzione:</strong> Leggi report settimanale e applica fix.</p>
                     </div>
                 </div>
 
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">Trend Stagionale</div>
-                            <div class="chart-subtitle">Andamento ricavi per stagione</div>
-                        </div>
-                    </div>
-                    <div class="chart-wrapper">
-                        <canvas id="seasonalChart"></canvas>
-                    </div>
+                <h3>6.5 Quando il vault è "maturo"</h3>
+                <p>Dopo ~2-3 mesi di uso sistematico, il vault raggiunge uno stato di "equilibrio dinamico":</p>
+                <ul>
+                    <li>✅ 80%+ MECE coverage (pochi file non categorizzati)</li>
+                    <li>✅ &lt;2 duplicati per settimana (Claude li segnala e li fissi subito)</li>
+                    <li>✅ Link density 2-3 link per file (note ben collegate)</li>
+                    <li>✅ Health score &gt;85/100</li>
+                    <li>✅ Tempi di ricerca &lt;1 minuto (Obsidian o Claude)</li>
+                </ul>
+
+            </section>
+
+            <!-- SEZIONE 7 -->
+            <section id="section-6">
+                <h2 style="margin-top: 0;">Parte 7 — Esempio Pratico Completo</h2>
+
+                <h3>7.1 Scenario: Arriva un nuovo cliente</h3>
+
+                <div class="card">
+                    <div class="card-title">📞 Martedì mattina, 10:30</div>
+                    <p>Un collaboratore dello studio riceve una chiamata da <strong>Marco Bianchi</strong>, imprenditore del settore manifatturiero. È un potenziale nuovo cliente.</p>
+                    <p>Durante la chiamata, prende nota di:</p>
+                    <ul>
+                        <li>Settore: Manifatturiero</li>
+                        <li>Fatturato: ~€2M</li>
+                        <li>Dipendenti: 8</li>
+                        <li>Situazione: Problemi di cash flow, chiede consulenza</li>
+                        <li>Prossimo step: Inviare preventivo entro mercoledì</li>
+                    </ul>
                 </div>
-            </div>
-        </div>
 
-        <!-- Seasonal Analysis -->
-        <div id="seasonal-section" class="fade-in">
-            <!-- Generato dinamicamente -->
-        </div>
+                <h3>7.2 Step 1: Aggiunta al Vault (Martedì pomeriggio)</h3>
+                <p>Apri Obsidian e crea un nuovo file in <strong>01-Inbox</strong> (ancora non è cliente ufficiale):</p>
 
-        <!-- Data Table -->
-        <div id="data-table" class="fade-in">
-            <!-- Generato dinamicamente -->
-        </div>
+                <div class="card">
+                    <div class="card-title">📄 File: 01-Inbox/Bianchi Marco—Prospect—2025-04-15.md</div>
+                    <pre>---
+title: Prospect — Marco Bianchi (Manifatturiero)
+category: 01-Inbox
+tags: [prospect, manifatturiero, cash-flow, 2025]
+created: 2025-04-15
+modified: 2025-04-15
+---
+
+# Prospect — Marco Bianchi
+
+## Info di Base
+- **Nome:** Marco Bianchi
+- **Attività:** Manifatturiero
+- **Fatturato:** ~€2M (2024)
+- **Dipendenti:** 8
+- **Problema principale:** Cash flow insufficiente
+
+## Note dal primo contatto (2025-04-15 10:30)
+- Chiamata durata ~20 min
+- Situazione: liquidità insufficiente per ordini stagionali
+- Chiede supporto su pianificazione finanziaria
+
+## Azioni richieste
+- [ ] Inviare preventivo entro 2025-04-16
+- [ ] Pianificare primo incontro
+- [ ] Preparare template analisi cash flow
+
+## Link correlati
+- [[Risorsa—Benchmark Settore Manifatturiero]]
+- [[Processo—Analisi Cash Flow per PMI]]
+
+---
+Status: Prospect
+Next action: Invia offerta entro mercoledì</pre>
+                </div>
+
+                <p>Salva il file. Il cloud sincronizza automaticamente.</p>
+
+                <h3>7.3 Step 2: INGEST automatico (mercoledì mattina)</h3>
+                <p>Claude processa il file nuovo:</p>
+                <ol>
+                    <li>✅ Legge il file di Bianchi</li>
+                    <li>✅ Verifica frontmatter (title, category, tags presenti ✓)</li>
+                    <li>✅ Controlla categoria: "01-Inbox" — OK, è prospect</li>
+                    <li>✅ Aggiorna <code>_metadata/index.md</code> con il nuovo file</li>
+                    <li>✅ Scrive nel log:
+                        <pre>[2025-04-16 06:15] INGEST | 1 file processato |
+Bianchi Marco (prospect) — categoria OK, tags OK</pre>
+                    </li>
+                </ol>
+
+                <h3>7.4 Step 3: Obsidian aggiornato (mercoledì mattina)</h3>
+                <p>Apri Obsidian, <code>index.md</code> è aggiornato:</p>
+                <pre>## File recenti (April 2025)
+- [[Bianchi Marco—Prospect—2025-04-15]] (01-Inbox)
+- [[Cliente—Verdi—Scheda Base]] (04-Clienti)
+- [[Progetto—App Interna—Sprint 3]] (05-Progetti)</pre>
+
+                <h3>7.5 Step 4: Se diventa cliente ufficiale</h3>
+                <p>Dopo la firma del contratto:</p>
+                <ol>
+                    <li>🚀 Sposta il file da <code>01-Inbox/</code> a <code>04-Clienti/</code></li>
+                    <li>✏️ Rinomina: <code>Cliente—Bianchi Marco—Manifatturiero.md</code></li>
+                    <li>🏷️ Aggiorna frontmatter:
+                        <pre>---
+title: Cliente — Marco Bianchi (Manifatturiero)
+category: 04-Clienti  ← CAMBIATO
+tags: [cliente-bianchi, manifatturiero, cash-flow]
+---</pre>
+                    </li>
+                    <li>💾 Salva</li>
+                </ol>
+
+                <h3>7.6 Step 5: LINT automatico (fine settimana)</h3>
+                <p>Claude esegue LINT. Risultato:</p>
+                <div class="card">
+                    <div class="card-title">Lint Report — esempio</div>
+                    <pre># Lint Report
+
+## Summary
+- Total files: 47
+- Orphan pages: 0
+- Phantom links: 0
+- Duplicate titles: 1
+
+## ⚠️ Alert
+- "Bianchi Marco—Prospect" (01-Inbox) è ora orfano!
+  Link precedente non più valido dopo spostamento.
+
+Suggerimento: Aggiorna link da
+[[Bianchi Marco—Prospect—2025-04-15]]
+a
+[[Cliente—Bianchi Marco—Manifatturiero]]</pre>
+                </div>
+
+                <p>L'alert viene applicato manualmente in 1 minuto.</p>
+
+                <h3>7.7 Step 6: CLOSE automatico (fine settimana)</h3>
+                <div class="card">
+                    <div class="card-title">Health Report — esempio</div>
+                    <pre># Health Report
+
+## Statistics
+- Total files: 47
+- Total links: 89
+- Link density: 1.9 links/file
+- Health score: 84/100
+
+## MECE Coverage
+- 01-Inbox: 2 (4%)
+- 02-Processi: 8 (17%)
+- 03-Risorse: 12 (26%)
+- 04-Clienti: 18 (38%)
+- 05-Progetti: 6 (13%)
+- 06-Archivi: 1 (2%)
+
+✅ Coverage: 96% (eccellente!)
+
+## Recommendations
+- Aggiungere link da cliente Bianchi a "Benchmark Manifatturiero"
+- Collegare preventivo a processo "Analisi Cash Flow"</pre>
+                </div>
+
+                <h3>7.8 Step 7: Analisi strategica da Claude</h3>
+                <p>Chiedi a Claude:</p>
+                <blockquote>
+                    "Nel mio Second Brain, quanti clienti del manifatturiero ho? Hanno problemi comuni?"
+                </blockquote>
+                <p>Claude legge il vault, cerca tag #manifatturiero, e risponde:</p>
+                <div class="card">
+                    <div class="card-title">Risposta di Claude</div>
+                    <pre>Clienti del settore manifatturiero nel vault:
+
+1. **Marco Bianchi** (Nuovo cliente)
+   - Fatturato: ~€2M
+   - Problema: Cash flow stagionale
+
+2. **Luigi Verdi** (Cliente attivo, 3 anni)
+   - Fatturato: ~€1.5M
+   - Problema storico: Gestione scorte
+
+3. **Alfa Industrie Srl** (Cliente recente, 6 mesi)
+   - Fatturato: ~€3.5M
+   - Problema: Pianificazione produzione
+
+**Pattern emergente:**
+I tre hanno in comune:
+- Problemi di liquidità e working capital
+- Picchi stagionali di ordini
+- Gestione scorte complessa
+
+**Opportunità:**
+Creare un pacchetto servizi specifico per il settore
+con benchmark e case study dai tre clienti.
+Potrebbe essere vendibile anche a nuovi prospect.</pre>
+                </div>
+
+                <h3>7.9 Risultato finale</h3>
+                <div class="callout tip">
+                    <div class="callout-title"><span class="callout-icon">💡</span> Il ciclo è completo</div>
+                    <p>In 2 settimane:</p>
+                    <ul>
+                        <li>✅ File aggiunto (manuale)</li>
+                        <li>✅ Indicizzato automaticamente</li>
+                        <li>✅ Diagnosticato automaticamente</li>
+                        <li>✅ Aggiornato manualmente</li>
+                        <li>✅ Analizzato intelligentemente da Claude</li>
+                        <li>✅ Insight strategico generato</li>
+                    </ul>
+                    <p><strong>Il Second Brain sta creando valore.</strong></p>
+                </div>
+
+            </section>
+
+            <!-- CHECKLIST FINALE -->
+            <section id="checklist">
+                <h2 style="margin-top: 0;">📋 Checklist di Implementazione</h2>
+
+                <h3>Fase 1: Setup iniziale (Day 1)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <span>Installa Obsidian da <strong>obsidian.md</strong></span></li>
+                    <li><input type="checkbox"> <span>Crea cartella vault nella directory cloud (es. <code>OneDrive\Second_Brain_Claude</code>)</span></li>
+                    <li><input type="checkbox"> <span>Crea sottocartelle: 01-Inbox, 02-Processi, 03-Risorse, 04-Clienti, 05-Progetti, 06-Archivi, _metadata, _reports</span></li>
+                    <li><input type="checkbox"> <span>Crea file: index.md, CLAUDE.md, log.md in _metadata/</span></li>
+                    <li><input type="checkbox"> <span>Apri Obsidian → "Open folder as vault" → seleziona la cartella del vault</span></li>
+                </ul>
+
+                <h3>Fase 2: Aggiunta file iniziali (Week 1)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <span>Aggiungi 3-5 file cliente in 04-Clienti/ (dai file esistenti)</span></li>
+                    <li><input type="checkbox"> <span>Aggiungi 3-5 procedure in 02-Processi/</span></li>
+                    <li><input type="checkbox"> <span>Aggiungi 5-10 risorse/articoli in 03-Risorse/</span></li>
+                    <li><input type="checkbox"> <span>Aggiungi frontmatter a ogni file</span></li>
+                    <li><input type="checkbox"> <span>Crea link interni tra file correlati</span></li>
+                </ul>
+
+                <h3>Fase 3: Setup automazione (Week 1-2)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <span>Installa Python 3.8+ (se si vuole automazione completa)</span></li>
+                    <li><input type="checkbox"> <span>Configura Task Scheduler (Windows) o cron job (Mac/Linux)</span></li>
+                    <li><input type="checkbox"> <span>Verifica che i task vengano eseguiti correttamente</span></li>
+                    <li><input type="checkbox"> <span>Controlla il primo log generato in _metadata/log.md</span></li>
+                </ul>
+
+                <h3>Fase 4: Routine quotidiana (ongoing)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <span>Mattina: Verifica cloud sincronizzato</span></li>
+                    <li><input type="checkbox"> <span>Durante lavoro: Aggiungi file nuovi in 01-Inbox/ o categoria appropriata</span></li>
+                    <li><input type="checkbox"> <span>Fine pomeriggio: Se necessario, chiedi a Claude una domanda specifica</span></li>
+                    <li><input type="checkbox"> <span>Fine settimana: Leggi lint report e health report</span></li>
+                </ul>
+
+                <h3>Fase 5: Mantenimento (weekly)</h3>
+                <ul class="checklist">
+                    <li><input type="checkbox"> <span>Inizio settimana: Applica suggerimenti dai report (merge duplicati, ecc.)</span></li>
+                    <li><input type="checkbox"> <span>Durante settimana: Sposta file da 01-Inbox in categoria corretta</span></li>
+                    <li><input type="checkbox"> <span>Fine settimana: Chiedi a Claude un'analisi strategica (pattern, opportunità)</span></li>
+                </ul>
+            </section>
+
+            <footer>
+                <p>📖 <strong>Second Brain con Obsidian e Claude — Guida Completa</strong></p>
+                <p>Versione 1.0 | Realizzato con Claude Code</p>
+            </footer>
+
+        </main>
     </div>
 
     <script>
-        // Dati ricavi corretti
-        const salesData = {
-            2024: [
-                {month: 'Gen', fullMonth: 'Gennaio', sales: 1297.02},
-                {month: 'Feb', fullMonth: 'Febbraio', sales: 627.45},
-                {month: 'Mar', fullMonth: 'Marzo', sales: 10592.94},
-                {month: 'Apr', fullMonth: 'Aprile', sales: 12017.25},
-                {month: 'Mag', fullMonth: 'Maggio', sales: 11246.63},
-                {month: 'Giu', fullMonth: 'Giugno', sales: 22305.76},
-                {month: 'Lug', fullMonth: 'Luglio', sales: 38623.64},
-                {month: 'Ago', fullMonth: 'Agosto', sales: 39212.26},
-                {month: 'Set', fullMonth: 'Settembre', sales: 4869.21},
-                {month: 'Ott', fullMonth: 'Ottobre', sales: 4309.99},
-                {month: 'Nov', fullMonth: 'Novembre', sales: 1111.29},
-                {month: 'Dic', fullMonth: 'Dicembre', sales: 8966.99}
-            ],
-            2023: [
-                {month: 'Gen', fullMonth: 'Gennaio', sales: 0},
-                {month: 'Feb', fullMonth: 'Febbraio', sales: 0},
-                {month: 'Mar', fullMonth: 'Marzo', sales: 0},
-                {month: 'Apr', fullMonth: 'Aprile', sales: 0},
-                {month: 'Mag', fullMonth: 'Maggio', sales: 591.97},
-                {month: 'Giu', fullMonth: 'Giugno', sales: 16826.09},
-                {month: 'Lug', fullMonth: 'Luglio', sales: 28047.26},
-                {month: 'Ago', fullMonth: 'Agosto', sales: 31562.22},
-                {month: 'Set', fullMonth: 'Settembre', sales: 5997.32},
-                {month: 'Ott', fullMonth: 'Ottobre', sales: 1309.78},
-                {month: 'Nov', fullMonth: 'Novembre', sales: 141.45},
-                {month: 'Dic', fullMonth: 'Dicembre', sales: 347.27}
-            ],
-            2022: [
-                {month: 'Gen', fullMonth: 'Gennaio', sales: 0},
-                {month: 'Feb', fullMonth: 'Febbraio', sales: 629.55},
-                {month: 'Mar', fullMonth: 'Marzo', sales: 0},
-                {month: 'Apr', fullMonth: 'Aprile', sales: 0},
-                {month: 'Mag', fullMonth: 'Maggio', sales: 7270.37},
-                {month: 'Giu', fullMonth: 'Giugno', sales: 19050.58},
-                {month: 'Lug', fullMonth: 'Luglio', sales: 22308.42},
-                {month: 'Ago', fullMonth: 'Agosto', sales: 20877.43},
-                {month: 'Set', fullMonth: 'Settembre', sales: 2321.82},
-                {month: 'Ott', fullMonth: 'Ottobre', sales: 509.09},
-                {month: 'Nov', fullMonth: 'Novembre', sales: 0},
-                {month: 'Dic', fullMonth: 'Dicembre', sales: 0}
-            ]
-        };
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
 
-        const costsData = {
-            2024: [
-                {month: 'Gen', fullMonth: 'Gennaio', costs: 8899.09},
-                {month: 'Feb', fullMonth: 'Febbraio', costs: 4806.94},
-                {month: 'Mar', fullMonth: 'Marzo', costs: 9394.15},
-                {month: 'Apr', fullMonth: 'Aprile', costs: 12299.82},
-                {month: 'Mag', fullMonth: 'Maggio', costs: 14141.38},
-                {month: 'Giu', fullMonth: 'Giugno', costs: 18169.48},
-                {month: 'Lug', fullMonth: 'Luglio', costs: 22874.96},
-                {month: 'Ago', fullMonth: 'Agosto', costs: 21481.10},
-                {month: 'Set', fullMonth: 'Settembre', costs: 10346.44},
-                {month: 'Ott', fullMonth: 'Ottobre', costs: 8354.07},
-                {month: 'Nov', fullMonth: 'Novembre', costs: 4234.35},
-                {month: 'Dic', fullMonth: 'Dicembre', costs: 8182.91}
-            ],
-            2023: [
-                {month: 'Gen', fullMonth: 'Gennaio', costs: 2523.76},
-                {month: 'Feb', fullMonth: 'Febbraio', costs: 1897.88},
-                {month: 'Mar', fullMonth: 'Marzo', costs: 2749.55},
-                {month: 'Apr', fullMonth: 'Aprile', costs: 1618.33},
-                {month: 'Mag', fullMonth: 'Maggio', costs: 3237.84},
-                {month: 'Giu', fullMonth: 'Giugno', costs: 13948.20},
-                {month: 'Lug', fullMonth: 'Luglio', costs: 18329.06},
-                {month: 'Ago', fullMonth: 'Agosto', costs: 22769.98},
-                {month: 'Set', fullMonth: 'Settembre', costs: 18497.52},
-                {month: 'Ott', fullMonth: 'Ottobre', costs: 6898.07},
-                {month: 'Nov', fullMonth: 'Novembre', costs: 7435.73},
-                {month: 'Dic', fullMonth: 'Dicembre', costs: 4246.65}
-            ],
-            2022: [
-                {month: 'Gen', fullMonth: 'Gennaio', costs: 870.02},
-                {month: 'Feb', fullMonth: 'Febbraio', costs: 1813.49},
-                {month: 'Mar', fullMonth: 'Marzo', costs: 1876.19},
-                {month: 'Apr', fullMonth: 'Aprile', costs: 1924.49},
-                {month: 'Mag', fullMonth: 'Maggio', costs: 6792.50},
-                {month: 'Giu', fullMonth: 'Giugno', costs: 17338.44},
-                {month: 'Lug', fullMonth: 'Luglio', costs: 19949.90},
-                {month: 'Ago', fullMonth: 'Agosto', costs: 15858.14},
-                {month: 'Set', fullMonth: 'Settembre', costs: 5731.29},
-                {month: 'Ott', fullMonth: 'Ottobre', costs: 7577.64},
-                {month: 'Nov', fullMonth: 'Novembre', costs: 2968.74},
-                {month: 'Dic', fullMonth: 'Dicembre', costs: 1923.46}
-            ]
-        };
-
-        let currentYear = 2024;
-        let charts = {};
-
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('it-IT', {
-                style: 'currency',
-                currency: 'EUR'
-            }).format(value);
-        }
-
-        function formatPercentage(value) {
-            return (value * 100).toFixed(1) + '%';
-        }
-
-        function updateTimestamp() {
-            // Rimossa la funzione di aggiornamento timestamp
-        }
-
-        function selectYear(year) {
-            currentYear = year;
-            
-            document.querySelectorAll('.year-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            
-            loadDashboard(year);
-        }
-
-        function calculateKPIs(salesData, costsData) {
-            const totalSales = salesData.reduce((sum, m) => sum + m.sales, 0);
-            const totalCosts = costsData.reduce((sum, m) => sum + m.costs, 0);
-            const totalProfit = totalSales - totalCosts;
-            const marginPercentage = totalSales > 0 ? totalProfit / totalSales : 0;
-            
-            const peakSalesMonth = salesData.reduce((max, m) => m.sales > max.sales ? m : max, {sales: 0, fullMonth: 'N/A'});
-            
-            return {
-                totalSales,
-                totalCosts,
-                totalProfit,
-                marginPercentage,
-                peakMonth: peakSalesMonth.fullMonth
-            };
-        }
-
-        function calculateSeasonalData(salesData, costsData) {
-            const seasons = {
-                spring: { sales: 0, costs: 0, profit: 0 },
-                summer: { sales: 0, costs: 0, profit: 0 },
-                autumn: { sales: 0, costs: 0, profit: 0 },
-                winter: { sales: 0, costs: 0, profit: 0 }
-            };
-
-            seasons.spring.sales = salesData[2].sales + salesData[3].sales + salesData[4].sales;
-            seasons.spring.costs = costsData[2].costs + costsData[3].costs + costsData[4].costs;
-            seasons.spring.profit = seasons.spring.sales - seasons.spring.costs;
-
-            seasons.summer.sales = salesData[5].sales + salesData[6].sales + salesData[7].sales;
-            seasons.summer.costs = costsData[5].costs + costsData[6].costs + costsData[7].costs;
-            seasons.summer.profit = seasons.summer.sales - seasons.summer.costs;
-
-            seasons.autumn.sales = salesData[8].sales + salesData[9].sales + salesData[10].sales;
-            seasons.autumn.costs = costsData[8].costs + costsData[9].costs + costsData[10].costs;
-            seasons.autumn.profit = seasons.autumn.sales - seasons.autumn.costs;
-
-            seasons.winter.sales = salesData[11].sales + salesData[0].sales + salesData[1].sales;
-            seasons.winter.costs = costsData[11].costs + costsData[0].costs + costsData[1].costs;
-            seasons.winter.profit = seasons.winter.sales - seasons.winter.costs;
-
-            return seasons;
-        }
-
-        function generateInsights(salesData, costsData, year) {
-            const kpis = calculateKPIs(salesData, costsData);
-            const insights = [];
-
-            insights.push({
-                icon: '💰',
-                text: `Il fatturato totale del ${year} è stato di ${formatCurrency(kpis.totalSales)} con costi operativi pari a ${formatCurrency(kpis.totalCosts)}.`
-            });
-            
-            insights.push({
-                icon: '📊',
-                text: `L'utile operativo registrato è di ${formatCurrency(kpis.totalProfit)} con un margine del ${formatPercentage(kpis.marginPercentage)}.`
-            });
-            
-            insights.push({
-                icon: '🏆',
-                text: `Il mese con le migliori performance è stato ${kpis.peakMonth} in termini di ricavi.`
-            });
-
-            const seasonal = calculateSeasonalData(salesData, costsData);
-            const bestSeason = Object.entries(seasonal)
-                .reduce((max, [name, data]) => data.profit > max.profit ? {name, ...data} : max, {name: '', profit: -Infinity});
-            
-            const seasonNames = {
-                'spring': 'Primavera',
-                'summer': 'Estate', 
-                'autumn': 'Autunno',
-                'winter': 'Inverno'
-            };
-            
-            insights.push({
-                icon: '🌟',
-                text: `La stagione più profittevole è risultata l'${seasonNames[bestSeason.name]} con un utile di ${formatCurrency(bestSeason.profit)}.`
-            });
-
-            return insights;
-        }
-
-        function loadDashboard(year) {
-            const sales = salesData[year];
-            const costs = costsData[year];
-            const kpis = calculateKPIs(sales, costs);
-            const seasonalData = calculateSeasonalData(sales, costs);
-            const insights = generateInsights(sales, costs, year);
-
-            // Aggiorna KPI Cards
-            document.getElementById('kpi-section').innerHTML = `
-                <div class="kpi-grid">
-                    <div class="kpi-card revenue">
-                        <div class="kpi-header">
-                            <div class="kpi-icon">💰</div>
-                        </div>
-                        <div class="kpi-value">${formatCurrency(kpis.totalSales)}</div>
-                        <div class="kpi-label">Ricavi Totali</div>
-                    </div>
-                    <div class="kpi-card costs">
-                        <div class="kpi-header">
-                            <div class="kpi-icon">📉</div>
-                        </div>
-                        <div class="kpi-value">${formatCurrency(kpis.totalCosts)}</div>
-                        <div class="kpi-label">Costi Totali</div>
-                    </div>
-                    <div class="kpi-card profit">
-                        <div class="kpi-header">
-                            <div class="kpi-icon">📈</div>
-                        </div>
-                        <div class="kpi-value">${formatCurrency(kpis.totalProfit)}</div>
-                        <div class="kpi-label">Utile Operativo</div>
-                    </div>
-                    <div class="kpi-card margin">
-                        <div class="kpi-header">
-                            <div class="kpi-icon">🎯</div>
-                        </div>
-                        <div class="kpi-value">${formatPercentage(kpis.marginPercentage)}</div>
-                        <div class="kpi-label">Margine Operativo</div>
-                    </div>
-                </div>
-            `;
-
-            // Aggiorna Insights
-            document.getElementById('insights-content').innerHTML = insights.map(insight => `
-                <div class="insight-item">
-                    <div class="insight-icon">${insight.icon}</div>
-                    <div class="insight-text">${insight.text}</div>
-                </div>
-            `).join('');
-
-            // Aggiorna Seasonal Analysis
-            document.getElementById('seasonal-section').innerHTML = `
-                <div class="seasonal-section">
-                    <div class="seasonal-header">
-                        <div class="seasonal-title">Analisi Stagionale ${year}</div>
-                    </div>
-                    <div class="seasonal-grid">
-                        <div class="season-card spring">
-                            <div class="season-title">🌸 Primavera</div>
-                            <div class="season-months">Marzo • Aprile • Maggio</div>
-                            <div class="season-metrics">
-                                <div class="metric-item">
-                                    <div class="metric-label">Ricavi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.spring.sales)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Costi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.spring.costs)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Utile</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.spring.profit)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Margine</div>
-                                    <div class="metric-value">${formatPercentage(seasonalData.spring.sales > 0 ? seasonalData.spring.profit / seasonalData.spring.sales : 0)}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="season-card summer">
-                            <div class="season-title">☀️ Estate</div>
-                            <div class="season-months">Giugno • Luglio • Agosto</div>
-                            <div class="season-metrics">
-                                <div class="metric-item">
-                                    <div class="metric-label">Ricavi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.summer.sales)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Costi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.summer.costs)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Utile</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.summer.profit)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Margine</div>
-                                    <div class="metric-value">${formatPercentage(seasonalData.summer.sales > 0 ? seasonalData.summer.profit / seasonalData.summer.sales : 0)}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="season-card autumn">
-                            <div class="season-title">🍂 Autunno</div>
-                            <div class="season-months">Settembre • Ottobre • Novembre</div>
-                            <div class="season-metrics">
-                                <div class="metric-item">
-                                    <div class="metric-label">Ricavi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.autumn.sales)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Costi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.autumn.costs)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Utile</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.autumn.profit)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Margine</div>
-                                    <div class="metric-value">${formatPercentage(seasonalData.autumn.sales > 0 ? seasonalData.autumn.profit / seasonalData.autumn.sales : 0)}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="season-card winter">
-                            <div class="season-title">❄️ Inverno</div>
-                            <div class="season-months">Dicembre • Gennaio • Febbraio</div>
-                            <div class="season-metrics">
-                                <div class="metric-item">
-                                    <div class="metric-label">Ricavi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.winter.sales)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Costi</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.winter.costs)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Utile</div>
-                                    <div class="metric-value">${formatCurrency(seasonalData.winter.profit)}</div>
-                                </div>
-                                <div class="metric-item">
-                                    <div class="metric-label">Margine</div>
-                                    <div class="metric-value">${formatPercentage(seasonalData.winter.sales > 0 ? seasonalData.winter.profit / seasonalData.winter.sales : 0)}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            // Aggiorna Data Table
-            document.getElementById('data-table').innerHTML = `
-                <div class="data-table">
-                    <div class="table-header">
-                        <div class="table-title">Dettaglio Mensile ${year}</div>
-                    </div>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Periodo</th>
-                                    <th class="number">Ricavi</th>
-                                    <th class="number">Costi</th>
-                                    <th class="number">Utile</th>
-                                    <th class="number">Margine %</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${sales.map((month, index) => {
-                                    const profit = month.sales - costs[index].costs;
-                                    const margin = month.sales > 0 ? (profit / month.sales) * 100 : 0;
-                                    return `
-                                        <tr>
-                                            <td><strong>${month.fullMonth}</strong></td>
-                                            <td class="number">${formatCurrency(month.sales)}</td>
-                                            <td class="number">${formatCurrency(costs[index].costs)}</td>
-                                            <td class="number ${profit >= 0 ? 'positive' : 'negative'}">${formatCurrency(profit)}</td>
-                                            <td class="number ${margin >= 0 ? 'positive' : 'negative'}">${margin.toFixed(1)}%</td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-            
-            // Distruggi i grafici esistenti
-            Object.values(charts).forEach(chart => {
-                if (chart) chart.destroy();
-            });
-            charts = {};
-            
-            // Crea i grafici
-            setTimeout(() => {
-                createRevenueChart(sales, costs, year);
-                createMarginChart(sales, costs, year);
-                createSeasonalChart(seasonalData, year);
-            }, 100);
-        }
-
-        function createRevenueChart(salesData, costsData, year) {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
-            
-            charts.revenue = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: salesData.map(d => d.month),
-                    datasets: [{
-                        label: 'Ricavi',
-                        data: salesData.map(d => d.sales),
-                        borderColor: '#38a169',
-                        backgroundColor: 'rgba(56, 161, 105, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#38a169',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6
-                    }, {
-                        label: 'Costi',
-                        data: costsData.map(d => d.costs),
-                        borderColor: '#e53e3e',
-                        backgroundColor: 'rgba(229, 62, 62, 0.1)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#e53e3e',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 2,
-                        pointRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                usePointStyle: true,
-                                padding: 20,
-                                font: {
-                                    size: 12,
-                                    weight: '500'
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '€' + (value / 1000).toFixed(0) + 'k';
-                                },
-                                font: {
-                                    size: 11
-                                },
-                                color: '#6b7280'
-                            },
-                            grid: {
-                                color: '#f3f4f6',
-                                borderColor: '#e5e7eb'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 11
-                                },
-                                color: '#6b7280'
-                            },
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 10
-                        }
-                    }
+        navLinks.forEach((link, index) => {
+            link.addEventListener('click', () => {
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                if (sections[index]) {
+                    sections[index].scrollIntoView({ behavior: 'smooth' });
                 }
             });
-        }
+        });
 
-        function createMarginChart(salesData, costsData, year) {
-            const ctx = document.getElementById('marginChart').getContext('2d');
-            
-            const margins = salesData.map((s, i) => {
-                const profit = s.sales - costsData[i].costs;
-                return s.sales > 0 ? (profit / s.sales) * 100 : 0;
-            });
-
-            charts.margin = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: salesData.map(d => d.month),
-                    datasets: [{
-                        label: 'Margine %',
-                        data: margins,
-                        backgroundColor: margins.map(m => m >= 0 ? 'rgba(56, 161, 105, 0.8)' : 'rgba(229, 62, 62, 0.8)'),
-                        borderColor: margins.map(m => m >= 0 ? '#38a169' : '#e53e3e'),
-                        borderWidth: 0,
-                        borderRadius: 6,
-                        borderSkipped: false
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            ticks: {
-                                callback: function(value) {
-                                    return value.toFixed(0) + '%';
-                                },
-                                font: {
-                                    size: 11
-                                },
-                                color: '#6b7280'
-                            },
-                            grid: {
-                                color: '#f3f4f6',
-                                borderColor: '#e5e7eb'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 11
-                                },
-                                color: '#6b7280'
-                            },
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 10
-                        }
-                    }
-                }
-            });
-        }
-
-        function createSeasonalChart(seasonalData, year) {
-            const ctx = document.getElementById('seasonalChart').getContext('2d');
-            
-            // Crea una curva gaussiana per rappresentare la stagionalità
-            const seasons = ['Inverno', 'Primavera', 'Estate', 'Autunno'];
-            const salesValues = [
-                seasonalData.winter.sales,
-                seasonalData.spring.sales, 
-                seasonalData.summer.sales,
-                seasonalData.autumn.sales
-            ];
-            const profitValues = [
-                seasonalData.winter.profit,
-                seasonalData.spring.profit,
-                seasonalData.summer.profit,
-                seasonalData.autumn.profit
-            ];
-            
-            charts.seasonal = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: seasons,
-                    datasets: [{
-                        label: 'Ricavi Stagionali',
-                        data: salesValues,
-                        borderColor: '#3182ce',
-                        backgroundColor: 'rgba(49, 130, 206, 0.1)',
-                        borderWidth: 4,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#3182ce',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 3,
-                        pointRadius: 8,
-                        pointHoverRadius: 10
-                    }, {
-                        label: 'Profitti Stagionali',
-                        data: profitValues,
-                        borderColor: '#38a169',
-                        backgroundColor: 'rgba(56, 161, 105, 0.1)',
-                        borderWidth: 4,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#38a169',
-                        pointBorderColor: '#fff',
-                        pointBorderWidth: 3,
-                        pointRadius: 8,
-                        pointHoverRadius: 10
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 20,
-                                usePointStyle: true,
-                                font: {
-                                    size: 11,
-                                    weight: '500'
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.dataset.label || '';
-                                    const value = formatCurrency(context.parsed.y);
-                                    return label + ': ' + value;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '€' + (value / 1000).toFixed(0) + 'k';
-                                },
-                                font: {
-                                    size: 11
-                                },
-                                color: '#6b7280'
-                            },
-                            grid: {
-                                color: '#f3f4f6',
-                                borderColor: '#e5e7eb'
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                font: {
-                                    size: 11,
-                                    weight: '500'
-                                },
-                                color: '#374151'
-                            },
-                            grid: {
-                                display: false
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    },
-                    layout: {
-                        padding: {
-                            top: 10,
-                            bottom: 10
-                        }
-                    },
-                    elements: {
-                        line: {
-                            borderJoinStyle: 'round'
-                        }
-                    }
-                }
-            });
-        }
-
-        // Funzione PDF ottimizzata
-        function generatePDF() {
-            const exportBtn = document.getElementById('exportBtn');
-            const exportBtnText = document.getElementById('exportBtnText');
-            
-            exportBtn.disabled = true;
-            exportBtnText.innerHTML = '<div class="loading-spinner"></div> Generando...';
-            
-            try {
-                const sales = salesData[currentYear];
-                const costs = costsData[currentYear];
-                const kpis = calculateKPIs(sales, costs);
-                const seasonalData = calculateSeasonalData(sales, costs);
-                const insights = generateInsights(sales, costs, currentYear);
-                
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('p', 'mm', 'a4');
-                
-                const pageWidth = 210;
-                const pageHeight = 297;
-                const margin = 20;
-                const contentWidth = pageWidth - 2 * margin;
-                let currentY = margin;
-                
-                function checkNewPage(neededHeight) {
-                    if (currentY + neededHeight > pageHeight - margin) {
-                        pdf.addPage();
-                        currentY = margin;
-                        return true;
-                    }
-                    return false;
-                }
-                
-                function drawColoredRect(x, y, width, height, color) {
-                    pdf.setFillColor(color[0], color[1], color[2]);
-                    pdf.rect(x, y, width, height, 'F');
-                }
-                
-                // HEADER PROFESSIONALE
-                pdf.setFontSize(26);
-                pdf.setFont(undefined, 'bold');
-                pdf.setTextColor(26, 54, 93);
-                pdf.text('PLAYA SRL', margin, currentY);
-                currentY += 8;
-                
-                pdf.setFontSize(16);
-                pdf.setFont(undefined, 'normal');
-                pdf.setTextColor(107, 114, 128);
-                pdf.text(`Financial Dashboard - Anno ${currentYear}`, margin, currentY);
-                currentY += 6;
-                
-                pdf.setFontSize(10);
-                pdf.text(`Generato il ${new Date().toLocaleDateString('it-IT')} | P.IVA: 04805160233`, margin, currentY);
-                currentY += 20;
-                
-                // Linea elegante
-                pdf.setDrawColor(229, 231, 235);
-                pdf.setLineWidth(0.5);
-                pdf.line(margin, currentY, pageWidth - margin, currentY);
-                currentY += 20;
-                
-                // KPI EXECUTIVE SUMMARY
-                pdf.setFontSize(18);
-                pdf.setFont(undefined, 'bold');
-                pdf.setTextColor(17, 24, 39);
-                pdf.text('Executive Summary', margin, currentY);
-                currentY += 15;
-                
-                const cardWidth = (contentWidth - 15) / 3;
-                const cardHeight = 25;
-                
-                // Card Ricavi
-                drawColoredRect(margin, currentY, cardWidth, cardHeight, [56, 161, 105]);
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(8);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('RICAVI TOTALI', margin + 5, currentY + 6);
-                pdf.setFontSize(16);
-                pdf.text(formatCurrency(kpis.totalSales), margin + 5, currentY + 18);
-                
-                // Card Costi
-                drawColoredRect(margin + cardWidth + 7.5, currentY, cardWidth, cardHeight, [229, 62, 62]);
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(8);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('COSTI TOTALI', margin + cardWidth + 12.5, currentY + 6);
-                pdf.setFontSize(16);
-                pdf.text(formatCurrency(kpis.totalCosts), margin + cardWidth + 12.5, currentY + 18);
-                
-                // Card Utile
-                const profitColor = kpis.totalProfit >= 0 ? [237, 137, 54] : [229, 62, 62];
-                drawColoredRect(margin + 2 * cardWidth + 15, currentY, cardWidth, cardHeight, profitColor);
-                pdf.setTextColor(255, 255, 255);
-                pdf.setFontSize(8);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('UTILE OPERATIVO', margin + 2 * cardWidth + 20, currentY + 6);
-                pdf.setFontSize(16);
-                pdf.text(formatCurrency(kpis.totalProfit), margin + 2 * cardWidth + 20, currentY + 18);
-                
-                currentY += cardHeight + 25;
-                pdf.setTextColor(17, 24, 39);
-                
-                // TABELLA DATI DETTAGLIATA
-                checkNewPage(80);
-                pdf.setFontSize(16);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('Analisi Mensile Dettagliata', margin, currentY);
-                currentY += 15;
-                
-                // Header tabella elegante
-                const colWidths = [35, 32, 32, 32, 32];
-                let startX = margin;
-                
-                drawColoredRect(startX, currentY, contentWidth, 10, [249, 250, 251]);
-                pdf.setFillColor(17, 24, 39);
-                pdf.rect(startX, currentY, contentWidth, 2, 'F');
-                
-                pdf.setTextColor(75, 85, 99);
-                pdf.setFontSize(9);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('MESE', startX + 2, currentY + 7);
-                pdf.text('RICAVI', startX + colWidths[0] + 2, currentY + 7);
-                pdf.text('COSTI', startX + colWidths[0] + colWidths[1] + 2, currentY + 7);
-                pdf.text('UTILE', startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, currentY + 7);
-                pdf.text('MARGINE %', startX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + 2, currentY + 7);
-                
-                currentY += 10;
-                
-                // Righe dati con styling alternato
-                sales.forEach((month, index) => {
-                    checkNewPage(7);
-                    
-                    const profit = month.sales - costs[index].costs;
-                    const margin = month.sales > 0 ? (profit / month.sales) * 100 : 0;
-                    
-                    if (index % 2 === 0) {
-                        drawColoredRect(startX, currentY, contentWidth, 6, [249, 250, 251]);
-                    }
-                    
-                    pdf.setFontSize(8);
-                    pdf.setFont(undefined, 'normal');
-                    pdf.setTextColor(55, 65, 81);
-                    
-                    pdf.text(month.fullMonth, startX + 2, currentY + 4);
-                    pdf.text(formatCurrency(month.sales), startX + colWidths[0] + 2, currentY + 4);
-                    pdf.text(formatCurrency(costs[index].costs), startX + colWidths[0] + colWidths[1] + 2, currentY + 4);
-                    
-                    pdf.setTextColor(profit >= 0 ? 56 : 229, profit >= 0 ? 161 : 62, profit >= 0 ? 105 : 62);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(formatCurrency(profit), startX + colWidths[0] + colWidths[1] + colWidths[2] + 2, currentY + 4);
-                    pdf.text(margin.toFixed(1) + '%', startX + colWidths[0] + colWidths[1] + colWidths[2] + colWidths[3] + 2, currentY + 4);
-                    
-                    currentY += 6;
-                });
-                
-                currentY += 20;
-                
-                // ANALISI STAGIONALE PROFESSIONALE
-                checkNewPage(60);
-                pdf.setFontSize(16);
-                pdf.setFont(undefined, 'bold');
-                pdf.setTextColor(17, 24, 39);
-                pdf.text('Analisi Performance Stagionali', margin, currentY);
-                currentY += 15;
-                
-                const seasonCardWidth = (contentWidth - 15) / 2;
-                const seasonCardHeight = 30;
-                
-                const seasons = [
-                    { name: 'PRIMAVERA', data: seasonalData.spring, color: [163, 213, 184] },
-                    { name: 'ESTATE', data: seasonalData.summer, color: [255, 234, 167] },
-                    { name: 'AUTUNNO', data: seasonalData.autumn, color: [250, 177, 160] },
-                    { name: 'INVERNO', data: seasonalData.winter, color: [116, 185, 255] }
-                ];
-                
-                seasons.forEach((season, index) => {
-                    const x = margin + (index % 2) * (seasonCardWidth + 7.5);
-                    const y = currentY + Math.floor(index / 2) * (seasonCardHeight + 10);
-                    
-                    drawColoredRect(x, y, seasonCardWidth, seasonCardHeight, season.color);
-                    
-                    pdf.setTextColor(55, 65, 81);
-                    pdf.setFontSize(12);
-                    pdf.setFont(undefined, 'bold');
-                    pdf.text(season.name, x + 5, y + 8);
-                    
-                    pdf.setFontSize(8);
-                    pdf.setFont(undefined, 'normal');
-                    pdf.text(`Ricavi: ${formatCurrency(season.data.sales)}`, x + 5, y + 15);
-                    pdf.text(`Costi: ${formatCurrency(season.data.costs)}`, x + 5, y + 19);
-                    pdf.text(`Utile: ${formatCurrency(season.data.profit)}`, x + 5, y + 23);
-                    const seasonMargin = season.data.sales > 0 ? season.data.profit / season.data.sales : 0;
-                    pdf.text(`Margine: ${formatPercentage(seasonMargin)}`, x + 5, y + 27);
-                });
-                
-                currentY += seasonCardHeight * 2 + 30;
-                
-                // INSIGHTS AZIENDALI
-                checkNewPage(40);
-                pdf.setFontSize(16);
-                pdf.setFont(undefined, 'bold');
-                pdf.setTextColor(17, 24, 39);
-                pdf.text('Key Business Insights', margin, currentY);
-                currentY += 15;
-                
-                insights.forEach(insight => {
-                    checkNewPage(12);
-                    
-                    // Bullet point elegante
-                    pdf.setFillColor(49, 130, 206);
-                    pdf.circle(margin + 3, currentY - 1, 1, 'F');
-                    
-                    pdf.setFontSize(9);
-                    pdf.setFont(undefined, 'normal');
-                    pdf.setTextColor(55, 65, 81);
-                    
-                    const lines = pdf.splitTextToSize(insight.text, contentWidth - 15);
-                    pdf.text(lines, margin + 8, currentY);
-                    currentY += lines.length * 4 + 3;
-                });
-                
-                // FOOTER PROFESSIONALE
-                currentY += 20;
-                checkNewPage(25);
-                
-                pdf.setDrawColor(229, 231, 235);
-                pdf.setLineWidth(0.5);
-                pdf.line(margin, currentY, pageWidth - margin, currentY);
-                currentY += 10;
-                
-                pdf.setFontSize(7);
-                pdf.setTextColor(156, 163, 175);
-                pdf.text('PLAYA SRL | Via Esempio 123, Verona | P.IVA: 04805160233', margin, currentY);
-                pdf.text(`Report confidenziale generato il ${new Date().toLocaleDateString('it-IT')}`, margin, currentY + 4);
-                pdf.text('Documento riservato - Solo per uso interno aziendale', pageWidth - margin - 70, currentY + 4);
-                
-                // Salva il PDF con nome professionale
-                const fileName = `PLAYA_SRL_Financial_Report_${currentYear}_${new Date().toISOString().split('T')[0]}.pdf`;
-                pdf.save(fileName);
-                
-                // Feedback positivo
-                setTimeout(() => {
-                    alert('✅ Report esportato con successo!\n\nIl documento PDF è stato generato e scaricato.');
-                }, 100);
-                
-            } catch (error) {
-                console.error('Errore durante l\'esportazione:', error);
-                alert('❌ Errore durante l\'esportazione del report.\n\nRiprova o contatta il supporto tecnico.');
-            } finally {
-                exportBtn.disabled = false;
-                exportBtnText.innerHTML = 'Esporta Report';
+        function scrollToSection(index) {
+            navLinks.forEach(l => l.classList.remove('active'));
+            navLinks[index].classList.add('active');
+            if (sections[index]) {
+                sections[index].scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        // Inizializzazione
-        document.addEventListener('DOMContentLoaded', function() {
-            loadDashboard(currentYear);
+        function toggleCollapsible(element) {
+            element.classList.toggle('active');
+        }
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = scrollPercent + '%';
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
         });
     </script>
 </body>
