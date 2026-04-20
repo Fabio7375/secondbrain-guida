@@ -1,1501 +1,1139 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Second Brain con Obsidian e Claude — Guida Completa</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --navy: #0f1f3d;
-            --gold: #b8973a;
-            --cream: #faf8f5;
-            --light-gray: #e8e5e0;
-            --dark-text: #1a1a1a;
-            --accent-red: #8b3a3a;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(135deg, var(--cream) 0%, #f5f1ed 100%);
-            color: var(--dark-text);
-            line-height: 1.6;
-        }
-
-        /* HEADER */
-        header {
-            background: linear-gradient(135deg, var(--navy) 0%, #0a1220 100%);
-            color: white;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            animation: slideDown 0.5s ease-out;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .logo .accent { color: var(--gold); }
-
-        .header-title {
-            flex: 1;
-            font-size: 1.2rem;
-            font-weight: 500;
-            opacity: 0.95;
-        }
-
-        .progress-bar {
-            width: 100px;
-            height: 4px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 0.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--gold);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* LAYOUT */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 0;
-            min-height: calc(100vh - 100px);
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            background: white;
-            border-right: 1px solid var(--light-gray);
-            padding: 2rem 0;
-            height: calc(100vh - 100px);
-            overflow-y: auto;
-            position: sticky;
-            top: 100px;
-        }
-
-        .sidebar nav {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .nav-section {
-            padding: 0 1rem;
-        }
-
-        .nav-section-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--navy);
-            margin: 1.5rem 0 0.5rem 0;
-            padding: 0 1rem;
-        }
-
-        .nav-link {
-            display: block;
-            padding: 0.75rem 1rem;
-            color: var(--dark-text);
-            text-decoration: none;
-            font-size: 0.95rem;
-            border-left: 3px solid transparent;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-link:hover {
-            background: var(--cream);
-            border-left-color: var(--gold);
-            transform: translateX(4px);
-        }
-
-        .nav-link.active {
-            background: rgba(184, 151, 58, 0.1);
-            border-left-color: var(--gold);
-            font-weight: 600;
-            color: var(--navy);
-        }
-
-        /* MAIN CONTENT */
-        main {
-            padding: 3rem;
-            background: var(--cream);
-            overflow-y: auto;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        section {
-            margin-bottom: 4rem;
-            opacity: 0;
-            animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        section:nth-child(1) { animation-delay: 0s; }
-        section:nth-child(2) { animation-delay: 0.1s; }
-        section:nth-child(3) { animation-delay: 0.2s; }
-
-        @keyframes fadeInUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        h1 {
-            font-size: 2.4rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
-        }
-
-        h2 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--navy);
-            margin: 2rem 0 1rem 0;
-            padding-bottom: 0.5rem;
-            border-bottom: 3px solid var(--gold);
-            display: inline-block;
-        }
-
-        h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--navy);
-            margin: 1.5rem 0 0.75rem 0;
-        }
-
-        p {
-            margin-bottom: 1rem;
-            line-height: 1.7;
-            color: #333;
-        }
-
-        .intro {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: white;
-            border-left: 4px solid var(--gold);
-            border-radius: 0 4px 4px 0;
-        }
-
-        /* CALLOUTS */
-        .callout {
-            margin: 1.5rem 0;
-            padding: 1.5rem;
-            border-radius: 4px;
-            border-left: 4px solid;
-            background: white;
-        }
-
-        .callout.warning {
-            border-left-color: #d97706;
-            background: #fef3c7;
-        }
-
-        .callout.tip {
-            border-left-color: var(--gold);
-            background: #fef7ed;
-        }
-
-        .callout.info {
-            border-left-color: var(--navy);
-            background: #e6eef7;
-        }
-
-        .callout-title {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .callout-icon { font-size: 1.2rem; }
-
-        ul, ol {
-            margin: 1rem 0 1rem 1.5rem;
-            line-height: 1.8;
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            background: white;
-            border-radius: 4px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        th {
-            background: var(--navy);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        tr:hover {
-            background: var(--cream);
-        }
-
-        code {
-            font-family: 'DM Mono', monospace;
-            background: var(--navy);
-            color: #fff;
-            padding: 0.2rem 0.5rem;
-            border-radius: 3px;
-            font-size: 0.9rem;
-        }
-
-        pre {
-            background: var(--navy);
-            color: #fff;
-            padding: 1.5rem;
-            border-radius: 4px;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            font-family: 'DM Mono', monospace;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .diagram {
-            margin: 2rem 0;
-            display: flex;
-            justify-content: center;
-            background: white;
-            padding: 2rem;
-            border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .checklist {
-            list-style: none;
-            margin: 1.5rem 0;
-        }
-
-        .checklist li {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem;
-            background: white;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .checklist li:hover {
-            background: var(--cream);
-            transform: translateX(4px);
-        }
-
-        .checklist input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--gold);
-        }
-
-        .checklist input[type="checkbox"]:checked + span {
-            text-decoration: line-through;
-            opacity: 0.6;
-        }
-
-        .card {
-            background: white;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
-        }
-
-        .card:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transform: translateY(-2px);
-        }
-
-        .card-title {
-            font-weight: 700;
-            color: var(--navy);
-            margin-bottom: 0.5rem;
-        }
-
-        .collapsible {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-weight: 600;
-            color: var(--navy);
-            padding: 1rem;
-            background: white;
-            border: 1px solid var(--light-gray);
-            border-radius: 4px;
-            margin: 1rem 0;
-            user-select: none;
-            transition: all 0.3s ease;
-        }
-
-        .collapsible:hover {
-            background: var(--cream);
-        }
-
-        .collapsible.active {
-            background: rgba(184, 151, 58, 0.1);
-            border-color: var(--gold);
-        }
-
-        .collapsible-icon {
-            transition: transform 0.3s ease;
-            display: inline-block;
-        }
-
-        .collapsible.active .collapsible-icon {
-            transform: rotate(180deg);
-        }
-
-        .collapsible-content {
-            display: none;
-            padding: 1.5rem;
-            background: var(--cream);
-            border-left: 3px solid var(--gold);
-            margin-bottom: 1rem;
-        }
-
-        .collapsible.active + .collapsible-content {
-            display: block;
-            animation: expandDown 0.3s ease-out;
-        }
-
-        @keyframes expandDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .grid-item {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 4px;
-            border-left: 4px solid var(--gold);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        footer {
-            background: var(--navy);
-            color: white;
-            text-align: center;
-            padding: 2rem;
-            margin-top: 4rem;
-            font-size: 0.9rem;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-            .sidebar {
-                display: none;
-            }
-
-            h1 { font-size: 1.6rem; }
-            h2 { font-size: 1.3rem; }
-            main { padding: 1.5rem; }
-
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .logo { font-size: 1.2rem; }
-        }
-
-        .text-center { text-align: center; }
-        .mt { margin-top: 2rem; }
-        .mb { margin-bottom: 2rem; }
-        .highlight { background: #fef7ed; padding: 2px 6px; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Second Brain — Guida Operativa</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0f1f3d;
+      --gold: #b8973a;
+      --cream: #faf8f5;
+      --gray: #e8e5e0;
+      --text: #1a1a1a;
+      --sidebar-w: 250px;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    header {
+      background: var(--navy);
+      color: #fff;
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,.3);
+    }
+    .h-brand { font-weight: 700; font-size: 1.05rem; }
+    .h-brand em { color: var(--gold); font-style: normal; }
+    .h-badge {
+      background: var(--gold); color: var(--navy);
+      font-size: .7rem; font-weight: 700;
+      padding: .2rem .75rem; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: .5px;
+    }
+    .progress-bar {
+      position: fixed; top: 60px; left: 0;
+      height: 3px; width: 0;
+      background: var(--gold); z-index: 300;
+      transition: width .1s linear;
+    }
+
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 60px);
+    }
+
+    aside {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      position: sticky;
+      top: 60px;
+      height: calc(100vh - 60px);
+      overflow-y: auto;
+      background: #fff;
+      border-right: 1px solid var(--gray);
+      padding: 1.5rem 0 2rem;
+    }
+    .nav-label {
+      font-size: .65rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1.2px;
+      color: #aaa; padding: 1.2rem 1.4rem .4rem;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: .7rem;
+      padding: .6rem 1.4rem;
+      font-size: .87rem; color: #555;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all .18s;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: var(--cream); color: var(--navy); border-left-color: var(--gold); }
+    .nav-item.active { background: rgba(184,151,58,.08); color: var(--navy); border-left-color: var(--gold); font-weight: 600; }
+    .nav-num {
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--navy); color: #fff;
+      font-size: .65rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .nav-item.active .nav-num { background: var(--gold); color: var(--navy); }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 3rem 3.5rem;
+      max-width: 880px;
+    }
+
+    .hero {
+      background: var(--navy); color: #fff;
+      border-radius: 8px; padding: 2.5rem 3rem;
+      margin-bottom: 3rem;
+    }
+    .hero h1 { font-size: 1.9rem; font-weight: 700; line-height: 1.2; margin-bottom: .75rem; }
+    .hero h1 em { color: var(--gold); font-style: normal; }
+    .hero p { color: rgba(255,255,255,.72); font-size: .97rem; max-width: 560px; }
+    .hero-chips { display: flex; gap: .5rem; flex-wrap: wrap; margin-top: 1.2rem; }
+    .chip {
+      background: rgba(255,255,255,.1); color: rgba(255,255,255,.82);
+      border: 1px solid rgba(255,255,255,.15);
+      border-radius: 20px; font-size: .77rem; padding: .2rem .85rem;
+    }
+
+    section { margin-bottom: 3.5rem; scroll-margin-top: 76px; }
+    .sec-head {
+      display: flex; align-items: center; gap: 1rem;
+      margin-bottom: 1.5rem; padding-bottom: 1rem;
+      border-bottom: 2px solid var(--gold);
+    }
+    .sec-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--navy); color: #fff;
+      font-size: .88rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    h2 { font-size: 1.4rem; font-weight: 700; color: var(--navy); }
+    h3 { font-size: 1.05rem; font-weight: 600; color: var(--navy); margin: 1.6rem 0 .6rem; }
+    p { margin-bottom: .85rem; color: #333; font-size: .96rem; }
+
+    .steps { display: flex; flex-direction: column; gap: .9rem; margin: 1rem 0; }
+    .step { display: flex; gap: 1rem; align-items: flex-start; }
+    .step-n {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--gold); color: var(--navy);
+      font-weight: 700; font-size: .85rem;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: .15rem;
+    }
+    .step-body { flex: 1; min-width: 0; padding-top: .3rem; }
+    .step-body strong { display: block; color: var(--navy); margin-bottom: .25rem; }
+
+    .callout {
+      border-radius: 6px; padding: 1rem 1.3rem;
+      margin: 1.1rem 0; border-left: 4px solid;
+      font-size: .92rem;
+    }
+    .callout-tip  { background: #f0f7ee; border-color: #4caf50; }
+    .callout-warn { background: #fff8e1; border-color: var(--gold); }
+    .callout-info { background: #e8f0fb; border-color: #3b6bc7; }
+    .callout-key  { background: rgba(15,31,61,.05); border-color: var(--navy); }
+    .callout-title { font-weight: 700; margin-bottom: .3rem; font-size: .88rem; }
+
+    code {
+      font-family: 'DM Mono', monospace;
+      background: rgba(15,31,61,.08);
+      color: var(--navy); padding: .1em .4em;
+      border-radius: 3px; font-size: .87em;
+    }
+    pre {
+      background: #0d1b30; color: #dde4ef;
+      border-radius: 6px; padding: 1.2rem 1.4rem;
+      overflow-x: auto;
+      font-family: 'DM Mono', monospace;
+      font-size: .84rem; line-height: 1.75;
+      margin: .9rem 0; white-space: pre;
+    }
+    .c  { color: #5f8aa8; }
+    .g  { color: #76c442; }
+    .gl { color: var(--gold); }
+    .b  { color: #7ec8e3; }
+    .w  { color: #f0a050; }
+
+    .tree {
+      background: #0d1b30; color: #dde4ef;
+      border-radius: 6px; padding: 1.2rem 1.4rem;
+      font-family: 'DM Mono', monospace;
+      font-size: .85rem; line-height: 1.85;
+      margin: .9rem 0;
+    }
+
+    .card {
+      background: #fff; border: 1px solid var(--gray);
+      border-radius: 8px; padding: 1.3rem 1.5rem;
+      margin: 1rem 0;
+    }
+    .card-title {
+      font-size: .74rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px;
+      color: var(--gold); margin-bottom: .7rem;
+    }
+
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0; }
+    @media (max-width: 680px) { .two-col { grid-template-columns: 1fr; } }
+    .feat-card { background: #fff; border: 1px solid var(--gray); border-radius: 8px; padding: 1.1rem; }
+    .feat-icon { font-size: 1.4rem; margin-bottom: .4rem; }
+    .feat-title { font-weight: 700; color: var(--navy); font-size: .93rem; margin-bottom: .25rem; }
+    .feat-desc { font-size: .86rem; color: #555; line-height: 1.5; }
+
+    .flow { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin: 1.1rem 0; }
+    .flow-box {
+      background: #fff; border: 2px solid var(--navy);
+      border-radius: 6px; padding: .45rem .9rem;
+      font-size: .85rem; font-weight: 600; color: var(--navy); text-align: center;
+    }
+    .flow-box.gold { background: var(--gold); border-color: var(--gold); }
+    .flow-box.navy { background: var(--navy); border-color: var(--navy); color: #fff; }
+    .flow-arrow { color: var(--gold); font-size: 1.1rem; font-weight: 700; }
+
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: .9rem; }
+    th { background: var(--navy); color: #fff; padding: .65rem 1rem; text-align: left; }
+    td { padding: .65rem 1rem; border-bottom: 1px solid var(--gray); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    tr:nth-child(even) td { background: rgba(15,31,61,.03); }
+
+    .checklist { list-style: none; display: flex; flex-direction: column; gap: .4rem; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: .75rem;
+      padding: .6rem .9rem; background: #fff;
+      border: 1px solid var(--gray); border-radius: 6px;
+      font-size: .91rem;
+    }
+    .checklist li input[type=checkbox] {
+      width: 16px; height: 16px; accent-color: var(--navy);
+      flex-shrink: 0; margin-top: .2rem; cursor: pointer;
+    }
+    .checklist li.done { opacity: .45; }
+    .checklist li.done span { text-decoration: line-through; }
+
+    .hl {
+      background: rgba(184,151,58,.1); border: 1.5px solid var(--gold);
+      border-radius: 6px; padding: .9rem 1.3rem;
+      margin: .9rem 0; font-size: .93rem;
+    }
+
+    .prompt-box {
+      background: #0d1b30; border-radius: 8px;
+      padding: 1.4rem 1.6rem; margin: 1rem 0;
+      position: relative;
+    }
+    .prompt-box .pb-label {
+      font-family: 'DM Mono', monospace;
+      font-size: .7rem; color: var(--gold);
+      text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: .75rem; font-weight: 700;
+    }
+    .prompt-box p {
+      color: #c8d5e8; font-size: .88rem; line-height: 1.7; margin: 0;
+      white-space: pre-wrap;
+    }
+    .copy-btn {
+      position: absolute; top: 1rem; right: 1rem;
+      background: rgba(184,151,58,.2); color: var(--gold);
+      border: 1px solid rgba(184,151,58,.4);
+      border-radius: 4px; font-size: .75rem; padding: .3rem .7rem;
+      cursor: pointer; font-family: 'DM Sans', sans-serif; font-weight: 600;
+    }
+    .copy-btn:hover { background: rgba(184,151,58,.35); }
+
+    footer { margin-top: 4rem; padding: 2rem 0; border-top: 1px solid var(--gray); font-size: .83rem; color: #999; }
+
+    @media (max-width: 700px) {
+      aside { display: none; }
+      main { padding: 1.5rem 1.2rem; }
+      .hero { padding: 1.6rem 1.4rem; }
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <div>
-                <div class="logo">BDZ<span class="accent">.</span>BRAIN</div>
-                <div class="header-title">Guida Completa — Second Brain con Obsidian e Claude</div>
-                <div class="progress-bar"><div class="progress-fill" id="progressBar"></div></div>
-            </div>
-        </div>
-    </header>
 
-    <div class="container">
-        <aside class="sidebar">
-            <nav>
-                <div class="nav-section-title">📚 Guida</div>
-                <div class="nav-section">
-                    <a class="nav-link active" onclick="scrollToSection(0)">Perché questo sistema</a>
-                    <a class="nav-link" onclick="scrollToSection(1)">Architettura</a>
-                    <a class="nav-link" onclick="scrollToSection(2)">Preparazione tecnica</a>
-                    <a class="nav-link" onclick="scrollToSection(3)">Logica di funzionamento</a>
-                    <a class="nav-link" onclick="scrollToSection(4)">Ruolo dell'utente</a>
-                    <a class="nav-link" onclick="scrollToSection(5)">Best practice</a>
-                    <a class="nav-link" onclick="scrollToSection(6)">Esempio pratico</a>
-                </div>
-                <div class="nav-section-title" style="margin-top: 2rem;">🔧 Strumenti</div>
-                <div class="nav-section">
-                    <a class="nav-link" href="#obsidian-setup">Obsidian Setup</a>
-                    <a class="nav-link" href="#claude-config">Claude Config</a>
-                    <a class="nav-link" href="#checklist">Checklist</a>
-                </div>
-            </nav>
-        </aside>
-
-        <main>
-            <!-- SEZIONE 1 -->
-            <section id="section-0">
-                <h1>Parte 1 — Perché Creare Questo Sistema</h1>
-
-                <div class="intro">
-                    Un professionista accumula nel tempo una grande quantità di materiali dispersi in cartelle diverse, email e appunti. Il problema non è solo conservarli, ma ritrovarli, collegarli e riutilizzarli quando servono.
-                </div>
-
-                <h2>1.1 L'esigenza iniziale</h2>
-                <p>Immagina uno studio professionale o un'azienda dopo anni di attività:</p>
-                <ul>
-                    <li>📁 <strong>Cartelle Windows</strong> con file sparsi senza logica</li>
-                    <li>📧 <strong>Email importanti</strong> difficili da ritrovare</li>
-                    <li>📄 <strong>PDF di riferimento</strong> salvati senza criterio</li>
-                    <li>📝 <strong>Appunti personali</strong> su riunioni e decisioni</li>
-                    <li>🔗 <strong>Nessun collegamento</strong> tra clienti, progetti e concetti</li>
-                    <li>❓ <strong>Dipendenza dalla memoria</strong> di chi conosce la storia</li>
-                </ul>
-
-                <h2>1.2 Problemi del metodo tradizionale</h2>
-                <div class="grid">
-                    <div class="grid-item">
-                        <div class="card-title">❌ Informazioni disperse</div>
-                        <p>Lo stesso cliente ha dati in Word, PDF, email, CRM. Nessun collegamento tra loro.</p>
-                    </div>
-                    <div class="grid-item">
-                        <div class="card-title">❌ Ricerca lenta</div>
-                        <p>Per trovare un'analisi fatta 6 mesi fa, si perde tempo a cercare tra cartelle.</p>
-                    </div>
-                    <div class="grid-item">
-                        <div class="card-title">❌ Conoscenza volatile</div>
-                        <p>Se una persona se ne va, la conoscenza va persa. Non è documentata.</p>
-                    </div>
-                    <div class="grid-item">
-                        <div class="card-title">❌ Assenza di pattern</div>
-                        <p>È impossibile vedere relazioni tra clienti, settori, problemi ricorrenti.</p>
-                    </div>
-                </div>
-
-                <h2>1.3 Obiettivo del sistema</h2>
-                <p>L'obiettivo <span class="highlight">non è creare un semplice archivio</span>, ma costruire un ambiente dove la conoscenza sia:</p>
-                <ul>
-                    <li>✅ <strong>Raccolta ordinatamente</strong> in un unico luogo</li>
-                    <li>✅ <strong>Collegata semanticamente</strong> (cliente → progetti → concetti)</li>
-                    <li>✅ <strong>Aggiornata continuamente</strong> senza sforzo manuale</li>
-                    <li>✅ <strong>Interrogabile intelligentemente</strong> via Claude</li>
-                    <li>✅ <strong>Consultabile visivamente</strong> via Obsidian</li>
-                    <li>✅ <strong>Controllata dall'utente</strong> (mai fuori controllo)</li>
-                </ul>
-
-                <h2>1.4 Risultato atteso</h2>
-                <div class="callout info">
-                    <div class="callout-title"><span class="callout-icon">ℹ️</span> Visione finale</div>
-                    <p>Quando il sistema è maturo, il professionista può fare domande come:</p>
-                    <ul style="margin-top: 0.5rem;">
-                        <li><strong>"Quali clienti hanno problemi di cash flow?"</strong> → Claude legge il vault e risponde con dati</li>
-                        <li><strong>"Quali procedure usiamo per questo processo?"</strong> → Obsidian mostra il link a processi correlati</li>
-                        <li><strong>"Che cosa abbiamo imparato da questo tipo di cliente?"</strong> → Claude analizza i pattern</li>
-                    </ul>
-                </div>
-            </section>
-
-            <!-- SEZIONE 2 -->
-            <section id="section-1">
-                <h2 style="margin-top: 0;">Parte 2 — Architettura del Sistema</h2>
-
-                <p>Il sistema è composto da 4 strati che lavorano insieme:</p>
-
-                <h3>2.1 I quattro strati</h3>
-
-                <div class="diagram">
-                    <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 500px;">
-                        <rect x="50" y="20" width="500" height="70" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
-                        <text x="300" y="55" font-size="18" font-weight="bold" text-anchor="middle" fill="#0f1f3d">1. Cloud Storage — Infrastruttura</text>
-                        <text x="300" y="75" font-size="12" text-anchor="middle" fill="#555">Sincronizzazione, backup, accesso ovunque</text>
-
-                        <rect x="50" y="110" width="500" height="70" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
-                        <text x="300" y="145" font-size="18" font-weight="bold" text-anchor="middle" fill="#b8973a">2. Obsidian — Conserva &amp; Naviga</text>
-                        <text x="300" y="165" font-size="12" text-anchor="middle" fill="#555">Editor locale, visualizzazione grafica, ricerca full-text</text>
-
-                        <rect x="50" y="200" width="500" height="70" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
-                        <text x="300" y="235" font-size="18" font-weight="bold" text-anchor="middle" fill="#0f1f3d">3. Claude — Elabora &amp; Organizza</text>
-                        <text x="300" y="255" font-size="12" text-anchor="middle" fill="#555">Legge, sintetizza, struttura, suggerisce azioni</text>
-
-                        <rect x="50" y="290" width="500" height="70" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
-                        <text x="300" y="325" font-size="18" font-weight="bold" text-anchor="middle" fill="#b8973a">4. Skill &amp; Automazione — Ordina Periodicamente</text>
-                        <text x="300" y="345" font-size="12" text-anchor="middle" fill="#555">Lint, ingest, close — manutenzione automatica</text>
-
-                        <path d="M 300 90 L 300 110" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <path d="M 300 180 L 300 200" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <path d="M 300 270 L 300 290" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
-
-                        <defs>
-                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                                <polygon points="0 0, 10 5, 0 10" fill="#666"/>
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-
-                <h3>2.2 Cos'è Obsidian</h3>
-                <p><strong>Obsidian</strong> è un editor di file markdown locale, connesso a una cartella del PC.</p>
-                <div class="callout tip">
-                    <div class="callout-title"><span class="callout-icon">💡</span> Ruolo di Obsidian</div>
-                    <p><strong>Non è un software cloud.</strong> È un'interfaccia locale che legge i tuoi file markdown da disco. La vera risorsa è la cartella di file — Obsidian è solo la finestra.</p>
-                </div>
-                <p><strong>Cosa puoi fare con Obsidian:</strong></p>
-                <ul>
-                    <li>✏️ Scrivere e editare note in markdown</li>
-                    <li>🔗 Creare link tra note (<code>[[nota-1]]</code>)</li>
-                    <li>🔍 Cercare full-text tra tutti i file</li>
-                    <li>📊 Visualizzare grafi di collegamento (quali note si citano)</li>
-                    <li>📁 Organizzare file in cartelle e tag</li>
-                </ul>
-
-                <h3>2.3 Cos'è Claude</h3>
-                <p><strong>Claude</strong> è un AI che puoi usare come agente per leggere il vault, organizzarlo e rispondere a domande.</p>
-                <div class="callout tip">
-                    <div class="callout-title"><span class="callout-icon">💡</span> Ruolo di Claude</div>
-                    <p>Claude <strong>non modifica il vault da solo.</strong> Tu gli dai istruzioni (skill), lui legge i file e suggerisce azioni o risponde domande. Tu decidi cosa applicare.</p>
-                </div>
-
-                <h3>2.4 Cloud Storage come infrastruttura</h3>
-                <p>Il vault vive in una cartella sincronizzata (OneDrive, Google Drive, Dropbox) perché:</p>
-                <table>
-                    <tr>
-                        <th>Vantaggio</th>
-                        <th>Motivo</th>
-                    </tr>
-                    <tr>
-                        <td>✅ <strong>Sincronizzato</strong></td>
-                        <td>Stesso vault su PC, tablet, altro device</td>
-                    </tr>
-                    <tr>
-                        <td>✅ <strong>Backup automatico</strong></td>
-                        <td>Il provider tiene copie; non perdi dati se il PC si rompe</td>
-                    </tr>
-                    <tr>
-                        <td>✅ <strong>Condivisibile</strong></td>
-                        <td>Puoi dare accesso ad altri (colleghi, collaboratori)</td>
-                    </tr>
-                    <tr>
-                        <td>✅ <strong>Locale e cloud</strong></td>
-                        <td>Obsidian lavora offline, sincronizza quando sei connesso</td>
-                    </tr>
-                </table>
-
-                <h3>2.5 MECE come principio organizzativo</h3>
-                <p><strong>MECE = Mutually Exclusive, Collectively Exhaustive</strong> (mutualmente esclusivo, collettivamente esaustivo).</p>
-                <p>Significa: ogni nota ha <strong>una sola categoria</strong>, e <strong>tutte le note sono categorizzate.</strong></p>
-                <div class="card">
-                    <div class="card-title">Esempio di categorizzazione MECE:</div>
-                    <p><strong>❌ Male:</strong></p>
-                    <ul>
-                        <li>Note per "Clienti"</li>
-                        <li>Note per "Progetti"</li>
-                        <li>Note sparse senza categoria (BUCO!)</li>
-                        <li>Una nota su un cliente che è anche un progetto (DUPLICE!)</li>
-                    </ul>
-                    <p><strong>✅ Bene:</strong></p>
-                    <ul>
-                        <li>01-Inbox (nuovi input)</li>
-                        <li>02-Processi (procedure studio)</li>
-                        <li>03-Risorse (knowledge base)</li>
-                        <li>04-Clienti (info cliente + storia)</li>
-                        <li>05-Progetti (attivi)</li>
-                        <li>06-Archivi (completati)</li>
-                    </ul>
-                </div>
-
-            </section>
-
-            <!-- SEZIONE 3 -->
-            <section id="section-2">
-                <h2 style="margin-top: 0;">Parte 3 — Preparazione Tecnica</h2>
-
-                <h3>3.1 Step 0: Prerequisiti</h3>
-                <ul>
-                    <li>✅ Cloud storage installato (OneDrive, Google Drive o Dropbox)</li>
-                    <li>✅ Account cloud attivo</li>
-                    <li>✅ Claude Code accessibile (claude.ai/code o app desktop)</li>
-                    <li>✅ Python 3.8+ installato (per automazione opzionale)</li>
-                </ul>
-
-                <h3>3.2 Passo 1: Crea la cartella del vault</h3>
-                <div class="callout info">
-                    <div class="callout-title"><span class="callout-icon">ℹ️</span> Percorso consigliato (OneDrive)</div>
-                    <p><code>C:\Users\[TuoNome]\OneDrive\Second_Brain_Claude</code></p>
-                </div>
-                <p>Assicurati che il cloud storage stia sincronizzando questa cartella:</p>
-                <pre>1. OneDrive (icona in basso a destra) → Impostazioni
-2. Account → Scegli le cartelle da sincronizzare
-3. ☑ Spunta "Second_Brain_Claude"
-4. Applica</pre>
-
-                <h3>3.3 Passo 2: Struttura iniziale</h3>
-                <p>Crea questa struttura di cartelle:</p>
-                <pre>Second_Brain_Claude/
-├── 01-Inbox/                 # Nuovi input (ancora non categorizzati)
-├── 02-Processi/              # Procedure e workflow
-├── 03-Risorse/               # Knowledge base, articoli, riferimenti
-├── 04-Clienti/               # Schede cliente + storia
-├── 05-Progetti/              # Progetti attivi
-├── 06-Archivi/               # Completati, archiviati
-├── _metadata/                # File di controllo
-│   ├── index.md              # Elenco centrale
-│   ├── CLAUDE.md             # Istruzioni per Claude
-│   └── log.md                # Log cumulativo
-└── _reports/                 # Report di lint/ingest/close</pre>
-
-                <h3>3.4 Passo 3: File di controllo</h3>
-                <p>Crea questi 3 file nella cartella <code>_metadata/</code>:</p>
-
-                <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span class="collapsible-icon">▼</span>
-                    <strong>📄 index.md — Elenco centrale del vault</strong>
-                </div>
-                <div class="collapsible-content">
-                    <pre># Second Brain Index
-
-## 📍 Struttura
-
-- **01-Inbox** — Nuovi input non categorizzati
-- **02-Processi** — Procedure e workflow
-- **03-Risorse** — Conoscenza, articoli, benchmark
-- **04-Clienti** — Schede cliente
-- **05-Progetti** — Progetti attivi
-- **06-Archivi** — Completati
-
-## 🏷️ Tags principali
-
-- #cliente-[nome]
-- #progetto-[codice]
-- #processo-[nome]
-- #risorsa-[tema]
-
-## 📊 Statistiche
-
-- Total files: 0
-- Last updated: [data]
-- Health score: TBD
-
----
-Maintained by Claude + Skill second-brain-vault</pre>
-                </div>
-
-                <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span class="collapsible-icon">▼</span>
-                    <strong>⚙️ CLAUDE.md — Istruzioni per Claude</strong>
-                </div>
-                <div class="collapsible-content">
-                    <pre># Istruzioni per Claude — Second Brain
-
-## Ruolo
-
-Sei l'agente che aiuta a mantenere ordinato e aggiornato il Second Brain.
-
-## Compiti
-
-1. **LINT**: Diagnostica
-   - Trova pagine orfane (non linkate)
-   - Rileva duplicati (titoli simili)
-   - Verifica link rotti
-
-2. **INGEST**: Indicizzazione
-   - Processa file nuovi
-   - Normalizza frontmatter (title, category, tags)
-   - Aggiorna index.md
-
-3. **CLOSE**: Reporting
-   - Calcola statistiche del vault
-   - Verifica MECE coverage
-   - Genera health report
-
-## Categorie MECE
-
-- 01-Inbox
-- 02-Processi
-- 03-Risorse
-- 04-Clienti
-- 05-Progetti
-- 06-Archivi
-
-Nessun file deve rimanere fuori da queste categorie.
-
-## Comandi
-
-/second-brain lint
-/second-brain ingest
-/second-brain close
-
----
-Last updated: [data]</pre>
-                </div>
-
-                <div class="collapsible" onclick="toggleCollapsible(this)">
-                    <span class="collapsible-icon">▼</span>
-                    <strong>📋 log.md — Log cumulativo</strong>
-                </div>
-                <div class="collapsible-content">
-                    <pre># Second Brain — Log
-
-Registro di tutte le operazioni eseguite sul vault.
-
-## Formato
-
-[YYYY-MM-DD HH:MM] COMANDO | RISULTATO | NOTE
-
-## Esempi
-
-[2025-04-19 06:00] LINT | 3 orfane trovate | "old-draft", "test-page", "archived-2023"
-[2025-04-19 06:15] INGEST | 5 file processati | categoria auto-assegnata a 2
-[2025-04-20 06:30] CLOSE | Health 82/100 | MECE 95% coverage
-
----
-Maintained by automation scripts</pre>
-                </div>
-
-                <h3>3.5 Passo 4: Installa Obsidian</h3>
-                <ol>
-                    <li>Scarica da <strong>obsidian.md</strong></li>
-                    <li>Installa normalmente</li>
-                    <li>Apri Obsidian → "Open folder as vault"</li>
-                    <li>Seleziona la cartella del vault creata al passo 1</li>
-                    <li>Fatto! Ora Obsidian monitora la cartella</li>
-                </ol>
-
-                <h3>3.6 Passo 5: Setup automazione (opzionale ma consigliato)</h3>
-                <p>Se vuoi che Claude operi automaticamente a intervalli regolari, puoi configurare un task scheduler (Windows) o cron job (Mac/Linux):</p>
-                <pre># Windows — Task Scheduler
-# Crea task che esegue ogni giorno alle 06:00:
-# Programma: python
-# Argomenti: C:\Users\[TuoNome]\second-brain-cli.py lint
-
-# Mac/Linux — crontab
-# 0 6 * * * python3 ~/second-brain-cli.py lint</pre>
-
-                <div class="callout warning">
-                    <div class="callout-title"><span class="callout-icon">⚠️</span> Attenzione</div>
-                    <p>Su Windows, esegui il setup del Task Scheduler con <strong>privilegi amministratore</strong>.</p>
-                </div>
-
-            </section>
-
-            <!-- SEZIONE 4 -->
-            <section id="section-3">
-                <h2 style="margin-top: 0;">Parte 4 — Logica di Funzionamento</h2>
-
-                <h3>4.1 Il flusso Utente → Obsidian → Claude → Aggiornamento</h3>
-
-                <div class="diagram">
-                    <svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg" style="width: 100%; max-width: 600px;">
-                        <rect x="50" y="20" width="150" height="80" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
-                        <text x="125" y="50" font-size="14" font-weight="bold" text-anchor="middle" fill="#0f1f3d">1. UTENTE</text>
-                        <text x="125" y="70" font-size="11" text-anchor="middle" fill="#555">Aggiunge file, email,</text>
-                        <text x="125" y="85" font-size="11" text-anchor="middle" fill="#555">appunti in 01-Inbox/</text>
-
-                        <rect x="250" y="20" width="150" height="80" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
-                        <text x="325" y="50" font-size="14" font-weight="bold" text-anchor="middle" fill="#b8973a">2. OBSIDIAN</text>
-                        <text x="325" y="70" font-size="11" text-anchor="middle" fill="#555">Mostra i file nuovi,</text>
-                        <text x="325" y="85" font-size="11" text-anchor="middle" fill="#555">permette collegamento</text>
-
-                        <rect x="450" y="20" width="150" height="80" fill="#e6eef7" stroke="#0f1f3d" stroke-width="2" rx="4"/>
-                        <text x="525" y="50" font-size="14" font-weight="bold" text-anchor="middle" fill="#0f1f3d">3. CLAUDE</text>
-                        <text x="525" y="70" font-size="11" text-anchor="middle" fill="#555">Legge, categorizza,</text>
-                        <text x="525" y="85" font-size="11" text-anchor="middle" fill="#555">suggerisce link</text>
-
-                        <path d="M 200 60 L 250 60" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <path d="M 400 60 L 450 60" stroke="#666" stroke-width="2" marker-end="url(#arrowhead)"/>
-
-                        <path d="M 450 100 Q 325 250 250 100" stroke="#b8973a" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead-gold)"/>
-
-                        <g id="operations">
-                            <rect x="50" y="150" width="180" height="100" fill="#fef3c7" stroke="#d97706" stroke-width="2" rx="4"/>
-                            <text x="140" y="175" font-size="14" font-weight="bold" text-anchor="middle" fill="#d97706">🔍 LINT</text>
-                            <text x="140" y="195" font-size="11" text-anchor="middle" fill="#333">Diagnostica quotidiana</text>
-                            <text x="140" y="210" font-size="10" text-anchor="middle" fill="#666">• Trova orfane</text>
-                            <text x="140" y="225" font-size="10" text-anchor="middle" fill="#666">• Rileva duplicati</text>
-                            <text x="140" y="240" font-size="10" text-anchor="middle" fill="#666">• Verifica link</text>
-
-                            <rect x="260" y="150" width="180" height="100" fill="#dbeafe" stroke="#0f1f3d" stroke-width="2" rx="4"/>
-                            <text x="350" y="175" font-size="14" font-weight="bold" text-anchor="middle" fill="#0f1f3d">📥 INGEST</text>
-                            <text x="350" y="195" font-size="11" text-anchor="middle" fill="#333">Indicizzazione</text>
-                            <text x="350" y="210" font-size="10" text-anchor="middle" fill="#666">• Processa file nuovi</text>
-                            <text x="350" y="225" font-size="10" text-anchor="middle" fill="#666">• Normalizza metadata</text>
-                            <text x="350" y="240" font-size="10" text-anchor="middle" fill="#666">• Aggiorna indici</text>
-
-                            <rect x="470" y="150" width="180" height="100" fill="#fef7ed" stroke="#b8973a" stroke-width="2" rx="4"/>
-                            <text x="560" y="175" font-size="14" font-weight="bold" text-anchor="middle" fill="#b8973a">📊 CLOSE</text>
-                            <text x="560" y="195" font-size="11" text-anchor="middle" fill="#333">Report settimanale</text>
-                            <text x="560" y="210" font-size="10" text-anchor="middle" fill="#666">• Statistiche vault</text>
-                            <text x="560" y="225" font-size="10" text-anchor="middle" fill="#666">• MECE coverage</text>
-                            <text x="560" y="240" font-size="10" text-anchor="middle" fill="#666">• Health score</text>
-                        </g>
-
-                        <text x="140" y="280" font-size="10" text-anchor="middle" fill="#999" font-style="italic">Ogni giorno</text>
-                        <text x="350" y="280" font-size="10" text-anchor="middle" fill="#999" font-style="italic">A metà settimana</text>
-                        <text x="560" y="280" font-size="10" text-anchor="middle" fill="#999" font-style="italic">Fine settimana</text>
-
-                        <rect x="50" y="320" width="600" height="140" fill="white" stroke="#999" stroke-width="1" stroke-dasharray="5,5" rx="4"/>
-                        <text x="350" y="340" font-size="12" font-weight="bold" text-anchor="middle" fill="#333">📂 Output nel vault</text>
-
-                        <text x="60" y="365" font-size="11" fill="#333"><tspan font-weight="bold">_reports/</tspan></text>
-                        <text x="80" y="380" font-size="10" fill="#666">• lint-report-YYYY-MM-DD.md</text>
-                        <text x="80" y="395" font-size="10" fill="#666">• health-report-YYYY-MM-DD.md</text>
-
-                        <text x="350" y="365" font-size="11" fill="#333"><tspan font-weight="bold">_metadata/</tspan></text>
-                        <text x="370" y="380" font-size="10" fill="#666">• index.md (aggiornato)</text>
-                        <text x="370" y="395" font-size="10" fill="#666">• log.md (cumulativo)</text>
-
-                        <defs>
-                            <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                                <polygon points="0 0, 10 5, 0 10" fill="#666"/>
-                            </marker>
-                            <marker id="arrowhead-gold" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
-                                <polygon points="0 0, 10 5, 0 10" fill="#b8973a"/>
-                            </marker>
-                        </defs>
-                    </svg>
-                </div>
-
-                <h3>4.2 Come Claude legge le istruzioni</h3>
-                <p>Quando invochi <code>/second-brain lint</code> in Claude, Claude accede a:</p>
-                <ol>
-                    <li>📄 <strong>SKILL.md</strong> — Istruzioni generali su cosa significa "lint"</li>
-                    <li>⚙️ <strong>CLAUDE.md</strong> — Categorie MECE e regole del tuo vault specifico</li>
-                    <li>📂 <strong>I file del vault</strong> — Legge struttura, file, link</li>
-                    <li>🔍 <strong>Esegue diagnostica</strong> e genera report</li>
-                </ol>
-
-                <h3>4.3 Cosa è automatico vs manuale</h3>
-                <table>
-                    <tr>
-                        <th>Operazione</th>
-                        <th>Chi la fa</th>
-                        <th>Quando</th>
-                        <th>Controllato da</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Aggiungere file</strong></td>
-                        <td>UTENTE</td>
-                        <td>Quando vuole</td>
-                        <td>Manuale</td>
-                    </tr>
-                    <tr>
-                        <td><strong>LINT (diagnostica)</strong></td>
-                        <td>CLAUDE</td>
-                        <td>Ogni giorno 06:00</td>
-                        <td>Automatico (Task Scheduler)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>INGEST (indicizza)</strong></td>
-                        <td>CLAUDE</td>
-                        <td>A metà settimana</td>
-                        <td>Automatico</td>
-                    </tr>
-                    <tr>
-                        <td><strong>CLOSE (report)</strong></td>
-                        <td>CLAUDE</td>
-                        <td>Fine settimana</td>
-                        <td>Automatico</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Decidere se applicare i suggerimenti</strong></td>
-                        <td>UTENTE</td>
-                        <td>Dopo aver visto il report</td>
-                        <td>Manuale</td>
-                    </tr>
-                </table>
-
-            </section>
-
-            <!-- SEZIONE 5 -->
-            <section id="section-4">
-                <h2 style="margin-top: 0;">Parte 5 — Ruolo dell'Utente: Cosa Fare Nei Vari Momenti</h2>
-
-                <h3>5.1 Al mattino (quando accendi il PC)</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Cloud storage sincronizzato? (icona in basso a destra)</span></li>
-                    <li><input type="checkbox"> <span>Se Obsidian era aperto, aggiorna (<code>F5</code>) per vedere file nuovi</span></li>
-                    <li><input type="checkbox"> <span>Leggi il <code>_metadata/log.md</code> — che ha fatto Claude stanotte?</span></li>
-                </ul>
-
-                <h3>5.2 Durante il lavoro (quando arriva un documento nuovo)</h3>
-                <p><strong>Scenario:</strong> Ricevi una email con un PDF importante, oppure completi un'analisi per un cliente.</p>
-                <ol>
-                    <li>📥 <strong>Aggiungi il file in 01-Inbox/</strong>
-                        <pre>01-Inbox/
-├── email-cliente-xyz-2025-04-19.txt
-└── analisi-cash-flow-bianchi.pdf</pre>
-                    </li>
-                    <li>📝 <strong>Se è markdown, aggiungi frontmatter minimo:</strong>
-                        <pre>---
-title: Analisi Cash Flow — Cliente Bianchi
-category: 04-Clienti
-tags: [cliente-bianchi, cash-flow, analisi]
-created: 2025-04-19
----
-
-Contenuto della nota...</pre>
-                    </li>
-                    <li>🔗 <strong>Se è correlato ad altro, aggiungi link:</strong>
-                        <pre>## Collegato a
-- [[Cliente Bianchi — Scheda principale]]
-- [[Processo: Analisi Cash Flow]]
-- [[Risorsa: Benchmark settore di riferimento]]</pre>
-                    </li>
-                    <li>💾 <strong>Salva</strong> (Obsidian auto-sincronizza sul cloud)</li>
-                </ol>
-
-                <h3>5.3 Quando vuoi interrogare il sistema (1-2 volte al giorno)</h3>
-                <p><strong>Scenario:</strong> Hai una domanda, cerchi un pattern, o vuoi un'analisi.</p>
-                <div class="card">
-                    <div class="card-title">Domanda 1: Ricerca veloce in Obsidian</div>
-                    <p><code>Ctrl+Shift+F</code> → cerca keyword → vedi tutti i file correlati</p>
-                </div>
-                <div class="card">
-                    <div class="card-title">Domanda 2: Chiedi a Claude</div>
-                    <p>Apri Claude e scrivi:</p>
-                    <pre>"Nel mio Second Brain, dammi un riepilogo
-di tutti i clienti con problemi di liquidità
-identificati negli ultimi 3 mesi."</pre>
-                    <p>Claude legge i file rilevanti del vault e risponde con dati concreti.</p>
-                </div>
-
-                <h3>5.4 Quando leggi un report di Claude</h3>
-                <p>Claude genera report automaticamente. Tu leggi e decidi:</p>
-                <div class="grid">
-                    <div class="grid-item">
-                        <div class="card-title">📄 Lint Report</div>
-                        <p><code>_reports/lint-report-YYYY-MM-DD.md</code></p>
-                        <p>Vedi problemi: 3 file orfani, 1 duplicato, 2 link rotti.</p>
-                        <p><strong>Azione:</strong> Decidi se mergerli, archiviarli, o lasciarli.</p>
-                    </div>
-                    <div class="grid-item">
-                        <div class="card-title">📊 Health Report</div>
-                        <p><code>_reports/health-report-YYYY-MM-DD.md</code></p>
-                        <p>Statistiche: 82/100, MECE 95%, 7 file inattivi.</p>
-                        <p><strong>Azione:</strong> Se salute bassa, applica suggerimenti.</p>
-                    </div>
-                </div>
-
-                <h3>5.5 Quando vuoi correggere o integrare manualmente</h3>
-                <p><strong>Scenario:</strong> Leggi il report di Claude e vedi che due file vanno mergiati.</p>
-                <ol>
-                    <li>🔍 Apri i due file in Obsidian</li>
-                    <li>🔗 Copia contenuto rilevante da uno all'altro</li>
-                    <li>🗑️ Elimina il duplicato (o spostalo in 06-Archivi/)</li>
-                    <li>💾 Salva</li>
-                    <li>⏳ Attendi prossimo CLOSE per vedere il MECE coverage migliorato</li>
-                </ol>
-
-                <h3>5.6 A fine giornata (opzionale, 5 minuti)</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Cloud storage sincronizzato? (spegni PC con tutto salvato)</span></li>
-                    <li><input type="checkbox"> <span>Se hai aggiunto molti file, chiedi a Claude un feedback rapido sulla struttura</span></li>
-                </ul>
-
-                <h3>5.7 Manutenzione periodica (settimanale)</h3>
-                <ul>
-                    <li>📋 <strong>Inizio settimana:</strong> Leggi lint report della settimana precedente</li>
-                    <li>🔄 <strong>Metà settimana:</strong> Applica correzioni segnalate</li>
-                    <li>📊 <strong>Fine settimana:</strong> Leggi health report</li>
-                </ul>
-
-            </section>
-
-            <!-- SEZIONE 6 -->
-            <section id="section-5">
-                <h2 style="margin-top: 0;">Parte 6 — Best Practice</h2>
-
-                <h3>6.1 Come nominare i file</h3>
-                <div class="callout info">
-                    <div class="callout-title"><span class="callout-icon">ℹ️</span> Schema di naming</div>
-                    <pre>[Categoria]—[Argomento]—[Data se necessario]
-
-Esempi:
-✅ Cliente—Bianchi—Scheda Base
-✅ Processo—Fatturazione—Procedura 2025
-✅ Risorsa—Benchmark Settore Manifatturiero
-✅ Progetto—Nuova App—Sprint 3
-❌ note  (troppo generico)
-❌ Copia di file_v2_finale_VERO (caos)</pre>
-                </div>
-
-                <h3>6.2 Struttura minima di una nota</h3>
-                <div class="card">
-                    <div class="card-title">Template markdown minimo</div>
-                    <pre>---
-title: [Titolo descrittivo]
-category: [01-Inbox | 02-Processi | 03-Risorse | 04-Clienti | 05-Progetti | 06-Archivi]
-tags: [tag1, tag2, tag3]
-created: YYYY-MM-DD
-modified: YYYY-MM-DD
----
-
-# [Titolo]
-
-## Sommario
-[1-2 righe che descrivono il contenuto]
-
-## Contenuto principale
-
-[Corpo della nota]
-
-## Link correlati
-- [[Nota collegata 1]]
-- [[Nota collegata 2]]
-
-## Note
-[Osservazioni finali]
-
----
-Last updated: [data]</pre>
-                </div>
-
-                <h3>6.3 Quando lavorare manualmente vs delegare a Claude</h3>
-                <table>
-                    <tr>
-                        <th>Compito</th>
-                        <th>Chi lo fa</th>
-                        <th>Perché</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Aggiungere nuovi file</strong></td>
-                        <td>TU (manuale)</td>
-                        <td>Solo tu sai cosa è importante e dove va</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Creare link tra note</strong></td>
-                        <td>TU (manuale)</td>
-                        <td>Richiede comprensione semantica umana</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Diagnosticare anomalie</strong></td>
-                        <td>CLAUDE (automatico)</td>
-                        <td>LINT trova orfane e duplicati in secondi</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Indicizzare</strong></td>
-                        <td>CLAUDE (automatico)</td>
-                        <td>INGEST normalizza metadata ripetitivo</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Decidere se applicare suggerimenti</strong></td>
-                        <td>TU (manuale)</td>
-                        <td>Solo tu hai il contesto per dire sì/no</td>
-                    </tr>
-                </table>
-
-                <h3>6.4 Errori tipici da evitare</h3>
-                <div class="grid">
-                    <div class="grid-item">
-                        <div class="card-title">❌ Non categorizzare i file</div>
-                        <p>Se lascio tutto in 01-Inbox/, il vault diventa caos. MECE fallisce.</p>
-                        <p><strong>✅ Soluzione:</strong> Dopo 1 settimana, sposta file in categoria corretta.</p>
-                    </div>
-                    <div class="grid-item">
-                        <div class="card-title">❌ Usare lo stesso file per due concetti</div>
-                        <p>Es: "Cliente Bianchi + Progetto Alpha" nello stesso file. Viola MECE.</p>
-                        <p><strong>✅ Soluzione:</strong> Due file separati, collegati con link.</p>
-                    </div>
-                    <div class="grid-item">
-                        <div class="card-title">❌ Non sincronizzare il cloud</div>
-                        <p>Se il cloud non sincronizza, Obsidian vede file vecchi, Claude vede dati stantii.</p>
-                        <p><strong>✅ Soluzione:</strong> Controlla l'icona del cloud storage ogni mattina.</p>
-                    </div>
-                    <div class="grid-item">
-                        <div class="card-title">❌ Ignorare i report di Claude</div>
-                        <p>Claude segnala "3 file orfani", tu ignori. Il vault degrada.</p>
-                        <p><strong>✅ Soluzione:</strong> Leggi report settimanale e applica fix.</p>
-                    </div>
-                </div>
-
-                <h3>6.5 Quando il vault è "maturo"</h3>
-                <p>Dopo ~2-3 mesi di uso sistematico, il vault raggiunge uno stato di "equilibrio dinamico":</p>
-                <ul>
-                    <li>✅ 80%+ MECE coverage (pochi file non categorizzati)</li>
-                    <li>✅ &lt;2 duplicati per settimana (Claude li segnala e li fissi subito)</li>
-                    <li>✅ Link density 2-3 link per file (note ben collegate)</li>
-                    <li>✅ Health score &gt;85/100</li>
-                    <li>✅ Tempi di ricerca &lt;1 minuto (Obsidian o Claude)</li>
-                </ul>
-
-            </section>
-
-            <!-- SEZIONE 7 -->
-            <section id="section-6">
-                <h2 style="margin-top: 0;">Parte 7 — Esempio Pratico Completo</h2>
-
-                <h3>7.1 Scenario: Arriva un nuovo cliente</h3>
-
-                <div class="card">
-                    <div class="card-title">📞 Martedì mattina, 10:30</div>
-                    <p>Un collaboratore dello studio riceve una chiamata da <strong>Marco Bianchi</strong>, imprenditore del settore manifatturiero. È un potenziale nuovo cliente.</p>
-                    <p>Durante la chiamata, prende nota di:</p>
-                    <ul>
-                        <li>Settore: Manifatturiero</li>
-                        <li>Fatturato: ~€2M</li>
-                        <li>Dipendenti: 8</li>
-                        <li>Situazione: Problemi di cash flow, chiede consulenza</li>
-                        <li>Prossimo step: Inviare preventivo entro mercoledì</li>
-                    </ul>
-                </div>
-
-                <h3>7.2 Step 1: Aggiunta al Vault (Martedì pomeriggio)</h3>
-                <p>Apri Obsidian e crea un nuovo file in <strong>01-Inbox</strong> (ancora non è cliente ufficiale):</p>
-
-                <div class="card">
-                    <div class="card-title">📄 File: 01-Inbox/Bianchi Marco—Prospect—2025-04-15.md</div>
-                    <pre>---
-title: Prospect — Marco Bianchi (Manifatturiero)
-category: 01-Inbox
-tags: [prospect, manifatturiero, cash-flow, 2025]
-created: 2025-04-15
-modified: 2025-04-15
----
-
-# Prospect — Marco Bianchi
-
-## Info di Base
-- **Nome:** Marco Bianchi
-- **Attività:** Manifatturiero
-- **Fatturato:** ~€2M (2024)
-- **Dipendenti:** 8
-- **Problema principale:** Cash flow insufficiente
-
-## Note dal primo contatto (2025-04-15 10:30)
-- Chiamata durata ~20 min
-- Situazione: liquidità insufficiente per ordini stagionali
-- Chiede supporto su pianificazione finanziaria
-
-## Azioni richieste
-- [ ] Inviare preventivo entro 2025-04-16
-- [ ] Pianificare primo incontro
-- [ ] Preparare template analisi cash flow
-
-## Link correlati
-- [[Risorsa—Benchmark Settore Manifatturiero]]
-- [[Processo—Analisi Cash Flow per PMI]]
-
----
-Status: Prospect
-Next action: Invia offerta entro mercoledì</pre>
-                </div>
-
-                <p>Salva il file. Il cloud sincronizza automaticamente.</p>
-
-                <h3>7.3 Step 2: INGEST automatico (mercoledì mattina)</h3>
-                <p>Claude processa il file nuovo:</p>
-                <ol>
-                    <li>✅ Legge il file di Bianchi</li>
-                    <li>✅ Verifica frontmatter (title, category, tags presenti ✓)</li>
-                    <li>✅ Controlla categoria: "01-Inbox" — OK, è prospect</li>
-                    <li>✅ Aggiorna <code>_metadata/index.md</code> con il nuovo file</li>
-                    <li>✅ Scrive nel log:
-                        <pre>[2025-04-16 06:15] INGEST | 1 file processato |
-Bianchi Marco (prospect) — categoria OK, tags OK</pre>
-                    </li>
-                </ol>
-
-                <h3>7.4 Step 3: Obsidian aggiornato (mercoledì mattina)</h3>
-                <p>Apri Obsidian, <code>index.md</code> è aggiornato:</p>
-                <pre>## File recenti (April 2025)
-- [[Bianchi Marco—Prospect—2025-04-15]] (01-Inbox)
-- [[Cliente—Verdi—Scheda Base]] (04-Clienti)
-- [[Progetto—App Interna—Sprint 3]] (05-Progetti)</pre>
-
-                <h3>7.5 Step 4: Se diventa cliente ufficiale</h3>
-                <p>Dopo la firma del contratto:</p>
-                <ol>
-                    <li>🚀 Sposta il file da <code>01-Inbox/</code> a <code>04-Clienti/</code></li>
-                    <li>✏️ Rinomina: <code>Cliente—Bianchi Marco—Manifatturiero.md</code></li>
-                    <li>🏷️ Aggiorna frontmatter:
-                        <pre>---
-title: Cliente — Marco Bianchi (Manifatturiero)
-category: 04-Clienti  ← CAMBIATO
-tags: [cliente-bianchi, manifatturiero, cash-flow]
----</pre>
-                    </li>
-                    <li>💾 Salva</li>
-                </ol>
-
-                <h3>7.6 Step 5: LINT automatico (fine settimana)</h3>
-                <p>Claude esegue LINT. Risultato:</p>
-                <div class="card">
-                    <div class="card-title">Lint Report — esempio</div>
-                    <pre># Lint Report
-
-## Summary
-- Total files: 47
-- Orphan pages: 0
-- Phantom links: 0
-- Duplicate titles: 1
-
-## ⚠️ Alert
-- "Bianchi Marco—Prospect" (01-Inbox) è ora orfano!
-  Link precedente non più valido dopo spostamento.
-
-Suggerimento: Aggiorna link da
-[[Bianchi Marco—Prospect—2025-04-15]]
-a
-[[Cliente—Bianchi Marco—Manifatturiero]]</pre>
-                </div>
-
-                <p>L'alert viene applicato manualmente in 1 minuto.</p>
-
-                <h3>7.7 Step 6: CLOSE automatico (fine settimana)</h3>
-                <div class="card">
-                    <div class="card-title">Health Report — esempio</div>
-                    <pre># Health Report
-
-## Statistics
-- Total files: 47
-- Total links: 89
-- Link density: 1.9 links/file
-- Health score: 84/100
-
-## MECE Coverage
-- 01-Inbox: 2 (4%)
-- 02-Processi: 8 (17%)
-- 03-Risorse: 12 (26%)
-- 04-Clienti: 18 (38%)
-- 05-Progetti: 6 (13%)
-- 06-Archivi: 1 (2%)
-
-✅ Coverage: 96% (eccellente!)
-
-## Recommendations
-- Aggiungere link da cliente Bianchi a "Benchmark Manifatturiero"
-- Collegare preventivo a processo "Analisi Cash Flow"</pre>
-                </div>
-
-                <h3>7.8 Step 7: Analisi strategica da Claude</h3>
-                <p>Chiedi a Claude:</p>
-                <blockquote>
-                    "Nel mio Second Brain, quanti clienti del manifatturiero ho? Hanno problemi comuni?"
-                </blockquote>
-                <p>Claude legge il vault, cerca tag #manifatturiero, e risponde:</p>
-                <div class="card">
-                    <div class="card-title">Risposta di Claude</div>
-                    <pre>Clienti del settore manifatturiero nel vault:
-
-1. **Marco Bianchi** (Nuovo cliente)
-   - Fatturato: ~€2M
-   - Problema: Cash flow stagionale
-
-2. **Luigi Verdi** (Cliente attivo, 3 anni)
-   - Fatturato: ~€1.5M
-   - Problema storico: Gestione scorte
-
-3. **Alfa Industrie Srl** (Cliente recente, 6 mesi)
-   - Fatturato: ~€3.5M
-   - Problema: Pianificazione produzione
-
-**Pattern emergente:**
-I tre hanno in comune:
-- Problemi di liquidità e working capital
-- Picchi stagionali di ordini
-- Gestione scorte complessa
-
-**Opportunità:**
-Creare un pacchetto servizi specifico per il settore
-con benchmark e case study dai tre clienti.
-Potrebbe essere vendibile anche a nuovi prospect.</pre>
-                </div>
-
-                <h3>7.9 Risultato finale</h3>
-                <div class="callout tip">
-                    <div class="callout-title"><span class="callout-icon">💡</span> Il ciclo è completo</div>
-                    <p>In 2 settimane:</p>
-                    <ul>
-                        <li>✅ File aggiunto (manuale)</li>
-                        <li>✅ Indicizzato automaticamente</li>
-                        <li>✅ Diagnosticato automaticamente</li>
-                        <li>✅ Aggiornato manualmente</li>
-                        <li>✅ Analizzato intelligentemente da Claude</li>
-                        <li>✅ Insight strategico generato</li>
-                    </ul>
-                    <p><strong>Il Second Brain sta creando valore.</strong></p>
-                </div>
-
-            </section>
-
-            <!-- CHECKLIST FINALE -->
-            <section id="checklist">
-                <h2 style="margin-top: 0;">📋 Checklist di Implementazione</h2>
-
-                <h3>Fase 1: Setup iniziale (Day 1)</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Installa Obsidian da <strong>obsidian.md</strong></span></li>
-                    <li><input type="checkbox"> <span>Crea cartella vault nella directory cloud (es. <code>OneDrive\Second_Brain_Claude</code>)</span></li>
-                    <li><input type="checkbox"> <span>Crea sottocartelle: 01-Inbox, 02-Processi, 03-Risorse, 04-Clienti, 05-Progetti, 06-Archivi, _metadata, _reports</span></li>
-                    <li><input type="checkbox"> <span>Crea file: index.md, CLAUDE.md, log.md in _metadata/</span></li>
-                    <li><input type="checkbox"> <span>Apri Obsidian → "Open folder as vault" → seleziona la cartella del vault</span></li>
-                </ul>
-
-                <h3>Fase 2: Aggiunta file iniziali (Week 1)</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Aggiungi 3-5 file cliente in 04-Clienti/ (dai file esistenti)</span></li>
-                    <li><input type="checkbox"> <span>Aggiungi 3-5 procedure in 02-Processi/</span></li>
-                    <li><input type="checkbox"> <span>Aggiungi 5-10 risorse/articoli in 03-Risorse/</span></li>
-                    <li><input type="checkbox"> <span>Aggiungi frontmatter a ogni file</span></li>
-                    <li><input type="checkbox"> <span>Crea link interni tra file correlati</span></li>
-                </ul>
-
-                <h3>Fase 3: Setup automazione (Week 1-2)</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Installa Python 3.8+ (se si vuole automazione completa)</span></li>
-                    <li><input type="checkbox"> <span>Configura Task Scheduler (Windows) o cron job (Mac/Linux)</span></li>
-                    <li><input type="checkbox"> <span>Verifica che i task vengano eseguiti correttamente</span></li>
-                    <li><input type="checkbox"> <span>Controlla il primo log generato in _metadata/log.md</span></li>
-                </ul>
-
-                <h3>Fase 4: Routine quotidiana (ongoing)</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Mattina: Verifica cloud sincronizzato</span></li>
-                    <li><input type="checkbox"> <span>Durante lavoro: Aggiungi file nuovi in 01-Inbox/ o categoria appropriata</span></li>
-                    <li><input type="checkbox"> <span>Fine pomeriggio: Se necessario, chiedi a Claude una domanda specifica</span></li>
-                    <li><input type="checkbox"> <span>Fine settimana: Leggi lint report e health report</span></li>
-                </ul>
-
-                <h3>Fase 5: Mantenimento (weekly)</h3>
-                <ul class="checklist">
-                    <li><input type="checkbox"> <span>Inizio settimana: Applica suggerimenti dai report (merge duplicati, ecc.)</span></li>
-                    <li><input type="checkbox"> <span>Durante settimana: Sposta file da 01-Inbox in categoria corretta</span></li>
-                    <li><input type="checkbox"> <span>Fine settimana: Chiedi a Claude un'analisi strategica (pattern, opportunità)</span></li>
-                </ul>
-            </section>
-
-            <footer>
-                <p>📖 <strong>Second Brain con Obsidian e Claude — Guida Completa</strong></p>
-                <p>Versione 1.0 | Realizzato con Claude Code</p>
-            </footer>
-
-        </main>
+<header>
+  <div class="h-brand">Second<em>Brain</em> · Guida Operativa</div>
+  <div class="h-badge">v3.1 — 2026</div>
+</header>
+<div class="progress-bar" id="progress"></div>
+
+<div class="layout">
+
+  <aside>
+    <div class="nav-label">Indice</div>
+    <a class="nav-item active" data-s="s0"><span class="nav-num">0</span>Cos'è e perché funziona</a>
+    <a class="nav-item" data-s="s1"><span class="nav-num">1</span>Prerequisiti</a>
+    <a class="nav-item" data-s="s2"><span class="nav-num">2</span>Installa Obsidian</a>
+    <a class="nav-item" data-s="s3"><span class="nav-num">3</span>Crea il Vault</a>
+    <a class="nav-item" data-s="s4"><span class="nav-num">4</span>Configura Claude + Skill</a>
+    <a class="nav-item" data-s="s5"><span class="nav-num">5</span>Come Claude accede al Vault</a>
+    <a class="nav-item" data-s="s6"><span class="nav-num">6</span>INGEST · QUERY · LINT · CLOSE</a>
+    <a class="nav-item" data-s="s7"><span class="nav-num">7</span>Flusso quotidiano</a>
+    <a class="nav-item" data-s="s8"><span class="nav-num">8</span>Checklist Setup</a>
+  </aside>
+
+  <main>
+
+    <!-- HERO -->
+    <div class="hero">
+      <h1>Il tuo <em>Second Brain</em><br>con Obsidian e Claude</h1>
+      <p>Una wiki personale che si costruisce e mantiene da sola: tu fornisci i documenti, Claude li integra, li sintetizza e li tiene aggiornati nel tempo.</p>
+      <div class="hero-chips">
+        <span class="chip">📁 Obsidian — visualizzatore</span>
+        <span class="chip">🤖 Claude — manutentore</span>
+        <span class="chip">☁️ OneDrive — sync</span>
+        <span class="chip">Conoscenza cumulativa</span>
+      </div>
     </div>
 
-    <script>
-        const navLinks = document.querySelectorAll('.nav-link');
-        const sections = document.querySelectorAll('section');
+    <!-- S0 -->
+    <section id="s0">
+      <div class="sec-head"><div class="sec-num">0</div><h2>Cos'è e perché funziona</h2></div>
 
-        navLinks.forEach((link, index) => {
-            link.addEventListener('click', () => {
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-                if (sections[index]) {
-                    sections[index].scrollIntoView({ behavior: 'smooth' });
-                }
-            });
-        });
+      <p>La maggior parte dei sistemi AI (come NotebookLM o i file upload di ChatGPT) riscopre la conoscenza da zero ad ogni domanda: recupera frammenti, genera una risposta, dimentica tutto. Non accumula nulla.</p>
 
-        function scrollToSection(index) {
-            navLinks.forEach(l => l.classList.remove('active'));
-            navLinks[index].classList.add('active');
-            if (sections[index]) {
-                sections[index].scrollIntoView({ behavior: 'smooth' });
-            }
-        }
+      <p>Il Second Brain funziona diversamente: quando aggiungi un documento, Claude non lo indicizza soltanto — lo <strong>legge, estrae le informazioni chiave e le integra nella wiki esistente</strong>, aggiornando le pagine già presenti, notando contraddizioni con ciò che già c'è, rafforzando la sintesi complessiva. La conoscenza si compila una volta sola e rimane aggiornata nel tempo.</p>
 
-        function toggleCollapsible(element) {
-            element.classList.toggle('active');
-        }
+      <div class="hl">
+        <strong>La differenza fondamentale:</strong> la wiki è un artefatto persistente e cumulativo. I collegamenti tra i documenti sono già lì. Le contraddizioni sono già segnalate. La sintesi riflette già tutto ciò che hai letto. Ad ogni nuovo documento diventa più ricca.
+      </div>
 
-        window.addEventListener('scroll', () => {
-            const scrollTop = document.documentElement.scrollTop;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / docHeight) * 100;
-            document.getElementById('progressBar').style.width = scrollPercent + '%';
-        });
+      <h3>I quattro componenti del sistema</h3>
+      <div class="two-col">
+        <div class="feat-card">
+          <div class="feat-icon">📂</div>
+          <div class="feat-title">raw/</div>
+          <div class="feat-desc">I tuoi documenti originali in qualsiasi formato. Immutabili — Claude li legge ma non li modifica mai. Sono la fonte di verità.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">📖</div>
+          <div class="feat-title">wiki/ (clienti · concetti · progetti · strumenti · sintesi)</div>
+          <div class="feat-desc">File markdown generati e mantenuti da Claude. Organizzati per categoria MECE. Solo Claude scrive qui; tu leggi.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">⚙️</div>
+          <div class="feat-title">Lo Schema (CLAUDE.md)</div>
+          <div class="feat-desc">Il file di configurazione che dice a Claude come è strutturata la wiki, le convenzioni da seguire, i comandi disponibili. Senza questo Claude è un chatbot generico.</div>
+        </div>
+        <div class="feat-card">
+          <div class="feat-icon">👁️</div>
+          <div class="feat-title">Obsidian</div>
+          <div class="feat-desc">L'interfaccia per navigare la wiki: graph view, link tra file, ricerca full-text. Claude è il manutentore; Obsidian è la finestra; i file .md sono il contenuto.</div>
+        </div>
+      </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const target = document.querySelector(this.getAttribute('href'));
-                    if (target) {
-                        target.scrollIntoView({ behavior: 'smooth' });
-                    }
-                });
-            });
-        });
-    </script>
+      <h3>Il ciclo operativo</h3>
+      <div class="flow">
+        <div class="flow-box">Butti un file<br><small>in raw/</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box gold">INGEST<br><small>Claude integra in wiki/</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">QUERY<br><small>analisi on demand</small></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box navy">LINT · CLOSE<br><small>salute e log</small></div>
+      </div>
+    </section>
+
+    <!-- S1 -->
+    <section id="s1">
+      <div class="sec-head"><div class="sec-num">1</div><h2>Prerequisiti</h2></div>
+
+      <p>Prima di iniziare, assicurati di avere questi elementi:</p>
+
+      <table>
+        <tr><th>Cosa serve</th><th>Come ottenerlo</th><th>Note</th></tr>
+        <tr>
+          <td><strong>Account Claude</strong></td>
+          <td>Registrati su <code>claude.ai</code></td>
+          <td>Il piano gratuito funziona. Il piano Pro (circa €20/mese) offre più messaggi e file più grandi — consigliato per uso professionale quotidiano.</td>
+        </tr>
+        <tr>
+          <td><strong>OneDrive o Google Drive</strong></td>
+          <td>Già incluso con Windows / account Google</td>
+          <td>Serve per sincronizzare il vault tra dispositivi. Funziona anche senza cloud, ma solo su un PC.</td>
+        </tr>
+        <tr>
+          <td><strong>Obsidian</strong></td>
+          <td>Scarica da <code>obsidian.md</code> — gratuito</td>
+          <td>App desktop per Windows, Mac, Linux. Nessun account richiesto.</td>
+        </tr>
+        <tr>
+          <td><strong>File in formato leggibile</strong></td>
+          <td>Vedi nota sotto</td>
+          <td>I file nel vault <code>raw/</code> vanno bene così come sono (html, txt, csv, gs, js…). La conversione in <code>.md</code> serve <strong>solo</strong> se li alleghi manualmente su claude.ai web — Claude Code li legge direttamente in qualsiasi formato.</td>
+        </tr>
+      </table>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Cos'è un file .md (Markdown)?</div>
+        Markdown è un formato di testo semplice con una sintassi minima per titoli, grassetti e link. Un file <code>.md</code> è un normale file di testo che puoi aprire con qualsiasi editor. Non devi imparare Markdown — Claude lo gestisce per te. Devi solo sapere che i file del vault hanno estensione <code>.md</code>.
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Conversione in .md — quando serve davvero?</div>
+        <strong>Con Claude Code (consigliato):</strong> nessuna conversione necessaria. Copia i file originali — html, txt, csv, js, gs, pdf — direttamente nella cartella <code>raw/</code> del vault. Claude li legge direttamente.<br><br>
+        <strong>Con claude.ai web (allegati manuali):</strong> allega i file con 📎. Il browser accetta html, txt, csv, pdf. Per file Word (.docx): apri, seleziona tutto, incolla in un editor di testo, salva come <code>.md</code>. Per email: copia il testo e salva come <code>.md</code>. Per pagine web: usa l'estensione gratuita <em>Obsidian Web Clipper</em>.
+      </div>
+    </section>
+
+    <!-- S2 -->
+    <section id="s2">
+      <div class="sec-head"><div class="sec-num">2</div><h2>Installa Obsidian</h2></div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Gratuito, locale, nessun account richiesto</div>
+        Obsidian è un'app desktop per Windows, Mac e Linux. I tuoi file rimangono sul tuo PC — Obsidian non carica nulla online.
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Vai su obsidian.md</strong>
+            Apri il browser e digita <code>obsidian.md</code>. Clicca il pulsante <strong>Download</strong> nella homepage.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Scarica per Windows</strong>
+            Seleziona <strong>Windows (Installer)</strong>. Verrà scaricato un file <code>.exe</code> di circa 90 MB.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Installa</strong>
+            Apri il file scaricato e segui la procedura guidata. Nessuna impostazione speciale — premi Avanti fino alla fine.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <strong>Apri Obsidian — non fare nulla ancora</strong>
+            Al primo avvio compare la schermata <em>"Open vault"</em>. Lasciala aperta: selezionerai la cartella dopo averla creata nel passo successivo.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">Plugin consigliati (opzionali, da installare dopo)</div>
+        <strong>Obsidian Web Clipper</strong> — estensione browser che converte articoli web in markdown e li salva direttamente nel vault.<br>
+        <strong>Dataview</strong> — plugin che interroga i metadati dei file per creare tabelle dinamiche nella wiki.
+      </div>
+    </section>
+
+    <!-- S3 -->
+    <section id="s3">
+      <div class="sec-head"><div class="sec-num">3</div><h2>Crea il Vault</h2></div>
+
+      <p>Il vault è una cartella di file <code>.md</code> sul tuo PC, dentro OneDrive o Google Drive per la sincronizzazione automatica.</p>
+
+      <h3>Opzione A — Crea la struttura con Claude (consigliata)</h3>
+      <p>Apri <code>claude.ai</code> e incolla questo prompt. Claude crea l'intera struttura di cartelle e file e ti chiede dove metterla.</p>
+
+      <div class="prompt-box">
+        <div class="pb-label">Prompt per Claude</div>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
+        <p id="prompt-cc">Devo creare un Second Brain vault per organizzare la mia conoscenza professionale con Obsidian e Claude.
+
+Crea questa struttura di cartelle e file nella cartella che ti indico (chiedimela prima):
+
+Second_Brain_Claude/
+├── CLAUDE.md              (vedi sotto)
+├── index.md               (contenuto: "# Index\n_Aggiornato da INGEST_\n")
+├── log.md                 (contenuto: "# Log\n_Aggiornato da CLOSE_\n")
+├── raw/                   (cartella vuota — fonti originali immutabili)
+├── wiki/
+│   ├── clienti/           (cartella vuota — una pagina per cliente)
+│   ├── concetti/          (cartella vuota — metodologie e framework)
+│   ├── progetti/          (cartella vuota — progetti attivi e completati)
+│   ├── strumenti/         (cartella vuota — tool e applicazioni create)
+│   └── sintesi/           (cartella vuota — analisi trasversali e insight)
+├── giornaliero/           (cartella vuota — log sessioni YYYY-MM-DD.md)
+├── templates/             (cartella vuota — template per nuove pagine)
+└── _reports/              (cartella vuota — report LINT e CLOSE)
+
+Per CLAUDE.md usa questo contenuto (lo personalizzerò dopo):
+---
+# Second Brain — Schema di Configurazione
+## Percorso vault
+C:\Users\[NOME]\OneDrive\Second_Brain_Claude\
+## Struttura
+raw/ (fonti) · wiki/clienti · wiki/concetti · wiki/progetti · wiki/strumenti · wiki/sintesi
+## Contesto professionale
+[DA COMPILARE: descrivi il tuo ambito professionale]
+---
+
+Chiedimi il percorso esatto prima di creare i file.</p>
+      </div>
+
+      <h3>Opzione B — Crea la struttura manualmente</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Apri Esplora File e naviga in OneDrive</strong>
+            Crea una nuova cartella e chiamala <code>Second_Brain_Claude</code>.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Crea le sottocartelle</strong>
+            <div class="tree" style="margin-top:.7rem">
+<span style="color:#7ec8e3">Second_Brain_Claude/</span>
+│
+├── <span style="color:#76c442">CLAUDE.md</span>            <span style="color:#5f8aa8">← schema e regole per Claude</span>
+├── <span style="color:#76c442">index.md</span>             <span style="color:#5f8aa8">← catalogo pagine wiki</span>
+├── <span style="color:#76c442">log.md</span>               <span style="color:#5f8aa8">← storico operazioni</span>
+├── <span style="color:#f0a050">raw/</span>                 <span style="color:#5f8aa8">← fonti originali (immutabili)</span>
+├── <span style="color:#7ec8e3">wiki/</span>
+│   ├── <span style="color:#7ec8e3">clienti/</span>         <span style="color:#5f8aa8">← una pagina per cliente</span>
+│   ├── <span style="color:#7ec8e3">concetti/</span>        <span style="color:#5f8aa8">← metodologie, framework</span>
+│   ├── <span style="color:#7ec8e3">progetti/</span>        <span style="color:#5f8aa8">← progetti attivi e completati</span>
+│   ├── <span style="color:#7ec8e3">strumenti/</span>       <span style="color:#5f8aa8">← tool e app create</span>
+│   └── <span style="color:#7ec8e3">sintesi/</span>         <span style="color:#5f8aa8">← analisi trasversali, insight</span>
+├── <span style="color:#7ec8e3">giornaliero/</span>         <span style="color:#5f8aa8">← log sessioni YYYY-MM-DD.md</span>
+├── <span style="color:#7ec8e3">templates/</span>           <span style="color:#5f8aa8">← template per nuove pagine</span>
+└── <span style="color:#7ec8e3">_reports/</span>            <span style="color:#5f8aa8">← report LINT e CLOSE</span></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Crea i file di sistema</strong>
+            Nella cartella principale crea questi file vuoti:
+            <ul style="margin:.5rem 0 0 1.1rem; color:#444; font-size:.9rem; line-height:1.9">
+              <li><code>index.md</code> — catalogo di tutte le pagine wiki</li>
+              <li><code>CLAUDE.md</code> — schema per Claude (vedi sezione 4)</li>
+              <li><code>log.md</code> — storico cronologico delle operazioni</li>
+            </ul>
+            <div class="callout callout-tip" style="margin-top:.7rem">
+              Per creare un file <code>.md</code>: clic destro → Nuovo documento di testo → rinomina cambiando l'estensione da <code>.txt</code> a <code>.md</code>. Se non vedi le estensioni: Esplora File → Visualizza → Estensioni nomi file ✓
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <strong>Apri il vault in Obsidian</strong>
+            Torna in Obsidian → <em>Open folder as vault</em> → seleziona <code>Second_Brain_Claude</code>. Vedrai la struttura nel pannello laterale sinistro.
+          </div>
+        </div>
+      </div>
+
+      <h3>Opzione C — Claude Code (creazione diretta, zero copia/incolla)</h3>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Solo per chi ha Claude Code installato</div>
+        Claude Code (app desktop o terminale) ha accesso diretto al tuo filesystem. Crea cartelle e file senza che tu debba copiare nulla — basta incollare il prompt e confermare.
+      </div>
+
+      <div class="prompt-box">
+        <div class="pb-label">Prompt per Claude Code — crea vault direttamente</div>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
+        <p id="prompt-cc2">Crea un vault Second Brain direttamente nel mio filesystem.
+
+Percorso vault: C:\Users\[NOME]\OneDrive\Second_Brain_Claude
+
+Crea queste cartelle (tutte vuote tranne i file di sistema):
+- raw/
+- wiki/clienti/
+- wiki/concetti/
+- wiki/progetti/
+- wiki/strumenti/
+- wiki/sintesi/
+- giornaliero/
+- templates/
+- _reports/
+
+Crea questi file nella root del vault:
+
+index.md:
+# Index — Second Brain
+
+_Catalogo di tutte le pagine wiki. Aggiornato automaticamente da Claude dopo ogni INGEST._
+
+---
+
+log.md:
+# Log
+
+_Storico cronologico delle operazioni sul vault._
+
+---
+
+CLAUDE.md:
+# CLAUDE.md — Schema del Second Brain
+
+## Percorso vault
+C:\Users\[NOME]\OneDrive\Second_Brain_Claude\
+
+## Struttura
+- raw/              → fonti originali (IMMUTABILI — solo lettura)
+- wiki/clienti/     → una pagina per cliente
+- wiki/concetti/    → metodologie, framework, terminologia
+- wiki/progetti/    → progetti attivi e completati
+- wiki/strumenti/   → tool, app, script creati
+- wiki/sintesi/     → analisi trasversali, confronti, insight
+- giornaliero/      → log sessioni (YYYY-MM-DD.md)
+- _reports/         → report LINT e CLOSE
+
+## File di sistema
+- index.md  → catalogo pagine wiki (aggiornato da INGEST)
+- log.md    → storico operazioni (append-only)
+
+## Comandi
+- ingest  → leggi raw/, integra in wiki/, aggiorna index.md e log.md
+- query   → rispondi da wiki/ con link [[]], salva sintesi in wiki/sintesi/
+- lint    → trova orfane, link rotti, duplicati, concetti senza pagina
+- close   → crea giornaliero/YYYY-MM-DD.md, aggiorna log.md
+
+## Frontmatter wiki
+---
+titolo: "Nome pagina"
+tipo: cliente | concetto | progetto | strumento | sintesi
+tags: [tag1, tag2]
+fonti: [nome-fonte.md]
+creato: YYYY-MM-DD
+aggiornato: YYYY-MM-DD
+---
+
+## Principio MECE
+Una pagina = un concetto/entità. Nessuna sovrapposizione.
+
+## Contesto professionale
+[DESCRIVI IL TUO AMBITO PROFESSIONALE QUI]
+
+Conferma il percorso prima di creare.</p>
+      </div>
+
+      <div class="callout callout-key">
+        <div class="callout-title">raw/ è il tuo "raw"</div>
+        Ogni documento da conservare va qui, grezzo, senza preparazione. Non devi rinominarlo, categorizzarlo o aggiungere metadati. Claude lo legge durante INGEST e scrive lui le pagine in <code>wiki/</code>.
+      </div>
+    </section>
+
+    <!-- S4 -->
+    <section id="s4">
+      <div class="sec-head"><div class="sec-num">4</div><h2>Configura Claude</h2></div>
+
+      <p>Per far funzionare il sistema devi fare due cose: creare il file <code>CLAUDE.md</code> nel vault (lo schema) e dire a Claude dove trovarlo.</p>
+
+      <h3>4.1 Crea CLAUDE.md nella root del vault</h3>
+      <p>Apri il file <code>CLAUDE.md</code> che hai creato nel passo precedente e incolla questo contenuto, <strong>personalizzando i campi tra parentesi</strong>:</p>
+
+      <div class="prompt-box">
+        <div class="pb-label">Contenuto di CLAUDE.md — personalizza i campi tra [parentesi]</div>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
+        <p id="prompt-claude"># CLAUDE.md — Schema del Second Brain
+
+Questo file definisce le regole e i workflow che Claude deve seguire per mantenere il wiki.
+
+## Percorso vault
+C:\Users\[TUO-NOME-UTENTE]\OneDrive\Second_Brain_Claude\
+
+## Struttura cartelle
+- raw/              → fonti originali (IMMUTABILI — solo lettura)
+- wiki/clienti/     → una pagina per cliente
+- wiki/concetti/    → metodologie, framework, terminologia
+- wiki/progetti/    → progetti attivi e completati
+- wiki/strumenti/   → tool, app, script creati
+- wiki/sintesi/     → analisi trasversali, confronti, insight
+- giornaliero/      → log sessioni (YYYY-MM-DD.md, creato da CLOSE)
+- templates/        → template per nuove pagine
+- _reports/         → report LINT e CLOSE
+
+## File di sistema
+- index.md          → catalogo di tutte le pagine wiki (aggiornato da INGEST)
+- log.md            → storico cronologico (append-only, aggiornato da ogni operazione)
+
+## Comandi disponibili
+- INGEST → legge i file in raw/, integra le informazioni in wiki/,
+           aggiorna index.md e log.md, segnala contraddizioni
+- QUERY  → risponde a domande leggendo index.md e le pagine wiki rilevanti,
+           salva risposte ricche come nuova pagina in wiki/sintesi/
+- LINT   → trova pagine orfane, link rotti, duplicati, concetti senza pagina
+- CLOSE  → crea giornaliero/YYYY-MM-DD.md, aggiorna log.md, health report
+
+## Convenzioni frontmatter (obbligatorio su ogni pagina wiki)
+---
+titolo: "Nome della pagina"
+tipo: cliente | concetto | progetto | strumento | sintesi
+tags: [tag1, tag2]
+fonti: [nome-fonte.md]
+creato: YYYY-MM-DD
+aggiornato: YYYY-MM-DD
+---
+
+## Principio MECE
+Una pagina = un concetto/entità/progetto ben definito. Nessuna sovrapposizione.
+Se un tema può stare in due posti, scegli il più specifico e linka dall'altro.
+Se non sai dove mettere qualcosa, mettila in wiki/sintesi/ e nota l'ambiguità.
+
+## Contesto professionale
+[DESCRIVI QUI IL TUO AMBITO: es. "Sono un consulente aziendale specializzato in
+controllo di gestione per PMI. I documenti riguardano clienti, analisi strategiche,
+procedure operative e strumenti gestionali."
+Più è preciso, più Claude contestualizza correttamente durante INGEST.]</p>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-title">I due campi più importanti da personalizzare</div>
+        <strong>Percorso vault:</strong> sostituisci <code>[TUO-NOME-UTENTE]</code> con il nome della tua cartella utente Windows (es. <code>C:\Users\Marco\OneDrive\...</code>).<br><br>
+        <strong>Contesto professionale:</strong> descrivi in 2-3 righe il tuo lavoro e il tipo di documenti che gestirai. Claude userà questo contesto per categorizzare correttamente i documenti durante INGEST.
+      </div>
+
+      <h3>4.2 Comunica a Claude dove si trova il vault</h3>
+      <p>Vai su <code>claude.ai</code> → <strong>Settings</strong> → <strong>Profile</strong> (o <em>Custom Instructions</em>) e aggiungi questo testo permanente:</p>
+
+      <div class="prompt-box">
+        <div class="pb-label">Istruzioni permanenti per claude.ai</div>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
+        <p id="prompt-prefs">Ho un Second Brain vault in C:\Users\[NOME]\OneDrive\Second_Brain_Claude\
+
+Struttura: raw/ (fonti immutabili) · wiki/clienti · wiki/concetti · wiki/progetti · wiki/strumenti · wiki/sintesi · giornaliero/ · index.md · log.md
+
+Quando scrivo "ingest", "query", "lint" o "close" (o "chiudi sessione"):
+1. Leggi prima il file CLAUDE.md allegato (lo schema del vault)
+2. Esegui l'operazione richiesta sui file allegati
+3. Restituisci i file aggiornati da copiare nel vault
+
+Il file CLAUDE.md contiene struttura, convenzioni e contesto professionale.</p>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-title">Quale metodo usare?</div>
+        <strong>Se usi claude.ai (browser):</strong> vai su <strong>Settings → Profile</strong>, trova il campo <em>"Quali preferenze personali dovrebbe considerare Claude nelle risposte?"</em> e incolla il testo sopra. Le istruzioni si applicano automaticamente ad ogni nuova conversazione.<br><br>
+        <strong>Se usi Claude Code (app desktop/terminale):</strong> installa la skill — vedi sezione 4.3 qui sotto. Una volta installata, i trigger funzionano in automatico senza configurare nulla altro.
+      </div>
+
+      <h3>4.3 Installa la Skill (solo Claude Code)</h3>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Cos'è una skill in Claude Code</div>
+        Una skill è un file <code>SKILL.md</code> salvato in <code>~\.claude\skills\[nome]\</code>. Claude Code lo rileva automaticamente e lo carica in memoria quando riconosce le parole trigger nella chat — senza che tu debba allegare file o ripetere istruzioni.
+      </div>
+
+      <p>Incolla questo prompt in Claude Code per installare la skill direttamente:</p>
+
+      <div class="prompt-box">
+        <div class="pb-label">Prompt Claude Code — installa skill second-brain-vault</div>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
+        <p id="prompt-skill">Crea il file della skill Second Brain nel percorso corretto per Claude Code.
+
+Crea questo file: C:\Users\[NOME]\.claude\skills\second-brain-vault\SKILL.md
+
+Contenuto del file:
+---
+name: second-brain-vault
+description: Gestione vault Second Brain con MECE. Si attiva su: ingest, query, lint, close, chiudi sessione, processa fonte, second-brain.
+---
+
+# Second Brain Vault — Skill
+
+## Trigger attivi
+Questa skill si carica automaticamente quando scrivi:
+ingest · query · lint · close · "chiudi sessione" · "processa questa fonte" · second-brain
+
+## Struttura vault (da CLAUDE.md allegato)
+- raw/              → fonti originali (immutabili)
+- wiki/clienti/     → clienti
+- wiki/concetti/    → metodologie e framework
+- wiki/progetti/    → progetti
+- wiki/strumenti/   → tool e app
+- wiki/sintesi/     → analisi trasversali
+- giornaliero/      → log sessioni (YYYY-MM-DD.md)
+File sistema: index.md · log.md · CLAUDE.md
+
+## INGEST
+1. Leggi i file in raw/ (o allegati)
+2. Discuti brevemente i punti chiave con l'utente
+3. Crea/aggiorna pagine in wiki/ (categoria MECE corretta)
+4. Aggiorna index.md e log.md
+5. Segnala contraddizioni con pagine esistenti
+
+## QUERY
+1. Leggi index.md → identifica pagine rilevanti
+2. Leggi le pagine rilevanti in wiki/
+3. Rispondi con citazioni [[wikilink]]
+4. Se la risposta è ricca, salvala in wiki/sintesi/
+5. Aggiorna log.md
+
+## LINT
+1. Trova pagine orfane (senza inbound link)
+2. Trova link a file inesistenti
+3. Identifica duplicati (titoli simili >75%)
+4. Segnala concetti citati senza pagina dedicata
+5. Salva report in _reports/lint-report-YYYY-MM-DD.md
+6. Aggiorna log.md
+
+## CLOSE
+1. Crea giornaliero/YYYY-MM-DD.md con: azioni fatte, pagine create/aggiornate, insight emersi, task aperti
+2. Aggiorna index.md se necessario
+3. Appendi entry in log.md
+
+## Frontmatter obbligatorio su ogni pagina wiki
+---
+titolo: "Nome pagina"
+tipo: cliente | concetto | progetto | strumento | sintesi
+tags: [tag1, tag2]
+fonti: [nome-fonte.md]
+creato: YYYY-MM-DD
+aggiornato: YYYY-MM-DD
+---
+
+## Regole assolute
+1. Mai modificare file in raw/ — sono immutabili
+2. Sempre aggiornare index.md e log.md dopo ogni operazione
+3. Sempre usare link [[NomePagina]] per i collegamenti interni
+4. Mai inventare fatti — se non sai, dichiaralo
+5. Segnala contraddizioni — non nasconderle
+
+Crea la cartella se non esiste. Conferma il percorso prima.</p>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">Verifica installazione</div>
+        Dopo aver creato il file, scrivi in Claude Code: <code>second-brain lint</code> — se la skill è attiva vedrai una risposta contestualizzata al vault, non una risposta generica.
+      </div>
+    </section>
+
+    <!-- S5 -->
+    <section id="s5">
+      <div class="sec-head"><div class="sec-num">5</div><h2>Come Claude accede al Vault</h2></div>
+
+      <div class="callout callout-info">
+        <div class="callout-title">Chiarimento fondamentale</div>
+        Claude non si connette a Obsidian. Obsidian è solo il tuo visualizzatore locale. Claude legge i file <code>.md</code> quando li alleghi nella chat — oppure, se usi Claude Code (l'app desktop/terminale), li legge direttamente dal filesystem senza che tu alleghi nulla.
+      </div>
+
+      <table>
+        <tr><th>Modalità</th><th>Come funziona</th><th>Quando usarla</th></tr>
+        <tr>
+          <td><strong>claude.ai (browser)</strong></td>
+          <td>Alleghi i file <code>.md</code> tramite il pulsante 📎. Puoi selezionare più file insieme con Ctrl+clic. Claude restituisce i file aggiornati da copiare nel vault.</td>
+          <td>Per la maggior parte delle operazioni quotidiane: INGEST di nuovi documenti, domande on demand, analisi spot.</td>
+        </tr>
+        <tr>
+          <td><strong>Claude Code (app desktop)</strong></td>
+          <td>Claude ha accesso diretto al filesystem del tuo PC. Legge e scrive i file del vault senza che tu alleghi nulla. Più potente e veloce.</td>
+          <td>Per INGEST massivo, LINT automatico, operazioni di manutenzione su molti file. Richiede installazione separata da <code>claude.ai/code</code>.</td>
+        </tr>
+      </table>
+
+      <h3>Procedura standard per claude.ai web (il 90% dei casi)</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Apri claude.ai e inizia una nuova conversazione</strong>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Allega i file necessari</strong>
+            Clicca 📎 e seleziona i file da <code>Second_Brain_Claude/</code>:<br>
+            — Per INGEST: allega i nuovi file da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code><br>
+            — Per QUERY: allega <code>CLAUDE.md</code> + <code>index.md</code> + i file wiki pertinenti<br>
+            — Per LINT: allega <code>CLAUDE.md</code> + tutti i file <code>.md</code> di <code>wiki/</code><br>
+            — Per CLOSE: allega <code>CLAUDE.md</code> + <code>index.md</code> + <code>log.md</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Scrivi il comando e invia</strong>
+            Es: <code>second-brain ingest</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <strong>Copia i file aggiornati nel vault</strong>
+            Claude restituisce il contenuto aggiornato di <code>_index.md</code> e le pagine wiki. Aprili in Obsidian (o con un editor di testo) e sostituisci il contenuto.
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-key">
+        <div class="callout-title">Il vault È la memoria tra sessioni</div>
+        Claude non ricorda le sessioni precedenti. Il vault è il contesto persistente. All'inizio di ogni nuova sessione allega sempre <code>CLAUDE.md</code> + <code>index.md</code>: Claude saprà immediatamente dove siete arrivati senza che tu debba rispiegare nulla. Se vuoi aggiungere contesto su una sessione precedente, allega anche il file <code>giornaliero/YYYY-MM-DD.md</code> corrispondente.
+      </div>
+    </section>
+
+    <!-- S6 -->
+    <section id="s6">
+      <div class="sec-head"><div class="sec-num">6</div><h2>INGEST · QUERY · LINT · CLOSE</h2></div>
+
+      <p>Quattro operazioni coprono il 100% del workflow sul vault. Si attivano scrivendo il trigger nella chat con i file allegati.</p>
+
+      <h3>INGEST — Integra nuovi documenti nella wiki</h3>
+      <div class="card">
+        <div class="card-title">Cosa fa</div>
+        <p style="margin:0; font-size:.91rem">Legge i nuovi file in <code>01-Inputs-Inbox</code>, ne estrae le informazioni chiave, le integra nelle pagine wiki esistenti (aggiornando entità, concetti, sintesi), assegna una categoria MECE, normalizza il frontmatter, aggiorna <code>_index.md</code> e <code>_tags-index.md</code>. Un singolo documento può toccare 5-15 pagine wiki.</p>
+      </div>
+
+      <p><strong>Trigger:</strong> <code>ingest</code> (o "processa questa fonte")</p>
+      <p><strong>Allega:</strong> file nuovi da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code></p>
+
+      <div class="card" style="margin-top:.8rem">
+        <div class="card-title">Esempio output</div>
+        <pre style="margin:0">
+<span class="c"># INGEST — 2026-04-20</span>
+
+<span class="g">✅ File processati: 3</span>
+   - bianchi-marco-prospect.html → wiki/clienti/cliente_bianchi_marco.md (creata)
+   - nota-riunione-cliente.txt   → wiki/sintesi/riunione_2026_04.md (creata)
+   - benchmark-settore.csv       → wiki/concetti/benchmark_settore.md (aggiornata)
+
+<span class="gl">📝 Pagine wiki aggiornate: 6</span>
+   - index.md (aggiornato)
+   - wiki/clienti/cliente_bianchi_marco.md (creata)
+   - wiki/sintesi/riunione_2026_04.md (creata)
+   [...]
+
+<span class="c"># ⚠ Contraddizione: benchmark_settore.md indicava margini 18%,
+#   nuovo file riporta 14% — aggiornato e segnalato</span></pre>
+      </div>
+
+      <h3>QUERY — Domanda al wiki</h3>
+      <div class="card">
+        <div class="card-title">Cosa fa</div>
+        <p style="margin:0; font-size:.91rem">Risponde a domande leggendo <code>index.md</code> e le pagine wiki rilevanti. Cita sempre le pagine usate con link <code>[[]]</code>. Se la risposta è sufficientemente ricca, la salva automaticamente come nuova pagina in <code>wiki/sintesi/</code>.</p>
+      </div>
+
+      <p><strong>Trigger:</strong> qualsiasi domanda libera (es. <em>"Quali clienti hanno problemi ricorrenti di liquidità?"</em>)</p>
+      <p><strong>Allega:</strong> <code>CLAUDE.md</code> + <code>index.md</code> + le pagine wiki pertinenti</p>
+
+      <div class="hl" style="margin-top:.8rem">
+        <em>"Tra i file del vault, quali clienti hanno problemi ricorrenti di liquidità?"</em><br><br>
+        <em>"Ci sono procedure non aggiornate da più di 6 mesi?"</em><br><br>
+        <em>"Esistono note simili su questo argomento? Proponi una fusione."</em>
+      </div>
+
+      <h3>LINT — Diagnostica settimanale</h3>
+      <div class="card">
+        <div class="card-title">Cosa fa</div>
+        <p style="margin:0; font-size:.91rem">Scansiona il vault e trova: pagine orfane (senza link in entrata), link a file inesistenti, duplicati (titoli simili oltre il 75%), file senza categoria, concetti citati più volte ma senza pagina dedicata. Produce un report in <code>_reports/</code>.</p>
+      </div>
+
+      <p><strong>Trigger:</strong> <code>lint</code> (o "controllo salute")</p>
+      <p><strong>Allega:</strong> <code>CLAUDE.md</code> + tutti i file <code>.md</code> di <code>wiki/</code></p>
+
+      <div class="card" style="margin-top:.8rem">
+        <div class="card-title">Esempio output</div>
+        <pre style="margin:0">
+<span class="c"># Lint Report — 2026-04-20</span>
+
+<span class="g">✅ File totali: 34 | MECE coverage: 94%</span>
+
+⚠️  Pagine orfane (2):
+   - riunione-febbraio.md  → nessun link in entrata
+   - draft-procedura.md    → nessun link in entrata
+
+⚠️  Possibili duplicati (1):
+   - budget-2026.md ≈ budget-previsionale-2026.md (88%)
+
+💡 Concetti frequenti senza pagina dedicata:
+   - "cash flow stagionale" (citato in 4 file)
+   → Suggerisco di creare 03-Resources/Cash-Flow-Stagionale.md
+
+<span class="g">✅ Link rotti: 0</span></pre>
+      </div>
+
+      <h3>CLOSE — Report mensile e log</h3>
+      <div class="card">
+        <div class="card-title">Cosa fa</div>
+        <p style="margin:0; font-size:.91rem">Genera un report di salute del vault (health score, statistiche, file inattivi da oltre 90 giorni, raccomandazioni), aggiorna <code>log.md</code> con un record cronologico permanente.</p>
+      </div>
+
+      <p><strong>Trigger:</strong> <code>close</code> · <code>chiudi sessione</code> · <code>grazie, abbiamo finito</code></p>
+      <p><strong>Allega:</strong> <code>CLAUDE.md</code> + <code>index.md</code> + <code>log.md</code></p>
+      <p><strong>Output:</strong> crea <code>giornaliero/YYYY-MM-DD.md</code> con riepilogo sessione, pagine toccate, insight emersi, task aperti. Aggiorna <code>log.md</code>.</p>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">Le risposte QUERY diventano pagine wiki</div>
+        Un'analisi richiesta, un confronto, una sintesi emergente — sono conoscenza preziosa. Claude le salva automaticamente in <code>wiki/sintesi/</code>. Così anche le tue esplorazioni si accumulano nella base di conoscenza.
+      </div>
+    </section>
+
+    <!-- S7 -->
+    <section id="s7">
+      <div class="sec-head"><div class="sec-num">7</div><h2>Flusso quotidiano</h2></div>
+
+      <table>
+        <tr><th>Frequenza</th><th>Azione</th><th>Tempo</th></tr>
+        <tr>
+          <td><strong>Ogni volta</strong></td>
+          <td>Hai un documento? Buttalo grezzo in <code>01-Inputs-Inbox</code> — qualsiasi formato (html, txt, pdf, csv…)</td>
+          <td>30 sec</td>
+        </tr>
+        <tr>
+          <td><strong>2-3 volte/settimana</strong></td>
+          <td>Allega i nuovi file da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code> → scrivi <code>ingest</code></td>
+          <td>5 min</td>
+        </tr>
+        <tr>
+          <td><strong>On demand</strong></td>
+          <td>Allega <code>index.md</code> + pagine rilevanti → fai la domanda (QUERY)</td>
+          <td>2 min</td>
+        </tr>
+        <tr>
+          <td><strong>Settimanale</strong></td>
+          <td>Allega wiki/ → scrivi <code>lint</code> — applica i suggerimenti evidenti</td>
+          <td>10 min</td>
+        </tr>
+        <tr>
+          <td><strong>Fine sessione</strong></td>
+          <td>Scrivi <code>chiudi sessione</code> → Claude crea il log giornaliero</td>
+          <td>1 min</td>
+        </tr>
+        <tr>
+          <td><strong>Mensile</strong></td>
+          <td>Scrivi <code>close</code> — health report completo e log.md</td>
+          <td>5 min</td>
+        </tr>
+      </table>
+
+      <div class="callout callout-key">
+        <div class="callout-title">Regola d'oro</div>
+        Non perfezionare i file prima di metterli nel vault. Buttali grezzi in <code>01-Inputs-Inbox</code>. Claude li elabora così come sono — questa è la differenza rispetto a un sistema di archiviazione tradizionale.
+      </div>
+
+      <h3>Cosa aspettarsi nel tempo</h3>
+      <table>
+        <tr><th>Periodo</th><th>Stato del vault</th><th>Valore percepito</th></tr>
+        <tr>
+          <td><strong>Settimana 1-2</strong></td>
+          <td>10-20 file, struttura base, pochi link</td>
+          <td>Basso — stai solo costruendo le fondamenta</td>
+        </tr>
+        <tr>
+          <td><strong>Mese 1-2</strong></td>
+          <td>30-60 file, pattern emergenti, link tra entità</td>
+          <td>Medio — Claude inizia a trovare connessioni non ovvie</td>
+        </tr>
+        <tr>
+          <td><strong>Mese 3+</strong></td>
+          <td>100+ file, sintesi consolidate, health score stabile</td>
+          <td>Alto — il vault risponde a domande che non avresti pensato di fare</td>
+        </tr>
+      </table>
+    </section>
+
+    <!-- S8 -->
+    <section id="s8">
+      <div class="sec-head"><div class="sec-num">8</div><h2>Checklist Setup</h2></div>
+
+      <h3>Fase 1 — Setup tecnico (1 ora)</h3>
+      <ul class="checklist">
+        <li><input type="checkbox"><span>Verifica di avere un account claude.ai attivo</span></li>
+        <li><input type="checkbox"><span>Scarica e installa Obsidian da <strong>obsidian.md</strong></span></li>
+        <li><input type="checkbox"><span>Crea cartella <code>Second_Brain_Claude</code> dentro OneDrive (o Google Drive)</span></li>
+        <li><input type="checkbox"><span>Crea le cartelle: <code>raw/</code> · <code>wiki/clienti/</code> · <code>wiki/concetti/</code> · <code>wiki/progetti/</code> · <code>wiki/strumenti/</code> · <code>wiki/sintesi/</code> · <code>giornaliero/</code> · <code>templates/</code> · <code>_reports/</code></span></li>
+        <li><input type="checkbox"><span>Crea i 3 file di sistema nella root: <code>index.md</code>, <code>CLAUDE.md</code>, <code>log.md</code></span></li>
+        <li><input type="checkbox"><span>Compila <code>CLAUDE.md</code>: personalizza percorso vault e sezione "Contesto professionale"</span></li>
+        <li><input type="checkbox"><span>Apri il vault in Obsidian → <em>Open folder as vault</em></span></li>
+        <li><input type="checkbox"><span>Aggiungi le istruzioni permanenti nel campo "Quali preferenze personali..." di claude.ai Settings → Profile</span></li>
+      </ul>
+
+      <h3>Fase 2 — Primo INGEST (30 minuti)</h3>
+      <ul class="checklist">
+        <li><input type="checkbox"><span>Copia 3-5 documenti esistenti in <code>raw/</code> — qualsiasi formato (html, txt, pdf, csv…)</span></li>
+        <li><input type="checkbox"><span>Allega i file + <code>CLAUDE.md</code> + <code>index.md</code> a Claude</span></li>
+        <li><input type="checkbox"><span>Scrivi <code>ingest</code> e invia</span></li>
+        <li><input type="checkbox"><span>Copia i file restituiti da Claude nelle cartelle <code>wiki/</code> appropriate</span></li>
+        <li><input type="checkbox"><span>Verifica in Obsidian che le pagine siano visibili e collegate</span></li>
+      </ul>
+
+      <h3>Fase 3 — Prima LINT (15 minuti)</h3>
+      <ul class="checklist">
+        <li><input type="checkbox"><span>Allega <code>CLAUDE.md</code> + tutti i file <code>.md</code> di <code>wiki/</code> a Claude</span></li>
+        <li><input type="checkbox"><span>Scrivi <code>lint</code> e invia</span></li>
+        <li><input type="checkbox"><span>Leggi il report e applica i suggerimenti più evidenti</span></li>
+        <li><input type="checkbox"><span>Salva il report in <code>_reports/lint-report-YYYY-MM-DD.md</code></span></li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">Setup completato — da qui in poi è routine</div>
+        Butti file → INGEST 2-3 volte a settimana → LINT settimanale → domande on demand. Il vault diventa più ricco ad ogni documento. Il valore cresce con il tempo.
+      </div>
+    </section>
+
+    <footer>
+      Second Brain con Obsidian e Claude · Guida Operativa v3.1 · 2026
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    document.getElementById('progress').style.width = (window.scrollY / h * 100) + '%';
+  });
+
+  const navItems = document.querySelectorAll('.nav-item');
+  const sections = document.querySelectorAll('section');
+
+  navItems.forEach(n => {
+    n.addEventListener('click', () => {
+      const t = document.getElementById(n.dataset.s);
+      if (t) t.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const a = document.querySelector(`.nav-item[data-s="${e.target.id}"]`);
+        if (a) a.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-25% 0px -65% 0px' });
+  sections.forEach(s => io.observe(s));
+
+  document.querySelectorAll('.checklist input[type=checkbox]').forEach((cb, i) => {
+    const k = 'sb31_cb_' + i;
+    cb.checked = localStorage.getItem(k) === '1';
+    const li = cb.closest('li');
+    if (cb.checked) li.classList.add('done');
+    cb.addEventListener('change', () => {
+      localStorage.setItem(k, cb.checked ? '1' : '0');
+      li.classList.toggle('done', cb.checked);
+    });
+  });
+
+  function copyPrompt(btn) {
+    const box = btn.parentElement;
+    const p = box.querySelector('p');
+    navigator.clipboard.writeText(p.innerText).then(() => {
+      btn.textContent = 'Copiato!';
+      setTimeout(() => btn.textContent = 'Copia', 1800);
+    });
+  }
+</script>
 </body>
 </html>
