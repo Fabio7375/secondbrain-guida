@@ -150,6 +150,7 @@
     .callout-warn { background: #fff8e1; border-color: var(--gold); }
     .callout-info { background: #e8f0fb; border-color: #3b6bc7; }
     .callout-key  { background: rgba(15,31,61,.05); border-color: var(--navy); }
+    .callout-cc   { background: #e8f7ee; border-color: #2e7d32; border-left-width: 5px; }
     .callout-title { font-weight: 700; margin-bottom: .3rem; font-size: .88rem; }
 
     code {
@@ -258,6 +259,16 @@
     }
     .copy-btn:hover { background: rgba(184,151,58,.35); }
 
+    /* Badge automatico/manuale */
+    .op-badges { display: flex; gap: .5rem; margin: .4rem 0 .9rem; flex-wrap: wrap; }
+    .badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      font-size: .75rem; font-weight: 700; padding: .2rem .7rem;
+      border-radius: 20px; letter-spacing: .3px;
+    }
+    .badge-auto { background: #e8f7ee; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .badge-manual { background: #fff8e1; color: #7a5a00; border: 1px solid #ffe082; }
+
     footer { margin-top: 4rem; padding: 2rem 0; border-top: 1px solid var(--gray); font-size: .83rem; color: #999; }
 
     @media (max-width: 700px) {
@@ -271,7 +282,7 @@
 
 <header>
   <div class="h-brand">Second<em>Brain</em> · Guida Operativa</div>
-  <div class="h-badge">v3.1 — 2026</div>
+  <div class="h-badge">v3.2 — 2026</div>
 </header>
 <div class="progress-bar" id="progress"></div>
 
@@ -376,21 +387,16 @@
           <td>App desktop per Windows, Mac, Linux. Nessun account richiesto.</td>
         </tr>
         <tr>
-          <td><strong>File in formato leggibile</strong></td>
-          <td>Vedi nota sotto</td>
-          <td>I file nel vault <code>raw/</code> vanno bene così come sono (html, txt, csv, gs, js…). La conversione in <code>.md</code> serve <strong>solo</strong> se li alleghi manualmente su claude.ai web — Claude Code li legge direttamente in qualsiasi formato.</td>
+          <td><strong>Claude Code</strong> (consigliato)</td>
+          <td>Scarica da <code>claude.ai/code</code></td>
+          <td>Accesso diretto al filesystem: niente allegati, niente copia/incolla. Claude legge e scrive i file del vault in autonomia. <strong>Se lo hai già installato, è il metodo preferito.</strong></td>
         </tr>
       </table>
 
       <div class="callout callout-info">
-        <div class="callout-title">Cos'è un file .md (Markdown)?</div>
-        Markdown è un formato di testo semplice con una sintassi minima per titoli, grassetti e link. Un file <code>.md</code> è un normale file di testo che puoi aprire con qualsiasi editor. Non devi imparare Markdown — Claude lo gestisce per te. Devi solo sapere che i file del vault hanno estensione <code>.md</code>.
-      </div>
-
-      <div class="callout callout-info">
-        <div class="callout-title">Conversione in .md — quando serve davvero?</div>
-        <strong>Con Claude Code (consigliato):</strong> nessuna conversione necessaria. Copia i file originali — html, txt, csv, js, gs, pdf — direttamente nella cartella <code>raw/</code> del vault. Claude li legge direttamente.<br><br>
-        <strong>Con claude.ai web (allegati manuali):</strong> allega i file con 📎. Il browser accetta html, txt, csv, pdf. Per file Word (.docx): apri, seleziona tutto, incolla in un editor di testo, salva come <code>.md</code>. Per email: copia il testo e salva come <code>.md</code>. Per pagine web: usa l'estensione gratuita <em>Obsidian Web Clipper</em>.
+        <div class="callout-title">Conversione in .md — quando serve?</div>
+        <strong>Con Claude Code:</strong> nessuna conversione necessaria. Copia i file originali — html, txt, csv, js, pdf — direttamente in <code>raw/</code>. Claude li legge direttamente.<br><br>
+        <strong>Con claude.ai web (allegati manuali):</strong> allega i file con 📎. Per file Word (.docx): apri, seleziona tutto, incolla in un editor di testo, salva come <code>.md</code>. Per pagine web: usa l'estensione gratuita <em>Obsidian Web Clipper</em>.
       </div>
     </section>
 
@@ -447,109 +453,15 @@
 
       <p>Il vault è una cartella di file <code>.md</code> sul tuo PC, dentro OneDrive o Google Drive per la sincronizzazione automatica.</p>
 
-      <h3>Opzione A — Crea la struttura con Claude (consigliata)</h3>
-      <p>Apri <code>claude.ai</code> e incolla questo prompt. Claude crea l'intera struttura di cartelle e file e ti chiede dove metterla.</p>
+      <h3>Opzione A — Claude Code (consigliata se ce l'hai)</h3>
 
-      <div class="prompt-box">
-        <div class="pb-label">Prompt per Claude</div>
-        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
-        <p id="prompt-cc">Devo creare un Second Brain vault per organizzare la mia conoscenza professionale con Obsidian e Claude.
-
-Crea questa struttura di cartelle e file nella cartella che ti indico (chiedimela prima):
-
-Second_Brain_Claude/
-├── CLAUDE.md              (vedi sotto)
-├── index.md               (contenuto: "# Index\n_Aggiornato da INGEST_\n")
-├── log.md                 (contenuto: "# Log\n_Aggiornato da CLOSE_\n")
-├── raw/                   (cartella vuota — fonti originali immutabili)
-├── wiki/
-│   ├── clienti/           (cartella vuota — una pagina per cliente)
-│   ├── concetti/          (cartella vuota — metodologie e framework)
-│   ├── progetti/          (cartella vuota — progetti attivi e completati)
-│   ├── strumenti/         (cartella vuota — tool e applicazioni create)
-│   └── sintesi/           (cartella vuota — analisi trasversali e insight)
-├── giornaliero/           (cartella vuota — log sessioni YYYY-MM-DD.md)
-├── templates/             (cartella vuota — template per nuove pagine)
-└── _reports/              (cartella vuota — report LINT e CLOSE)
-
-Per CLAUDE.md usa questo contenuto (lo personalizzerò dopo):
----
-# Second Brain — Schema di Configurazione
-## Percorso vault
-C:\Users\[NOME]\OneDrive\Second_Brain_Claude\
-## Struttura
-raw/ (fonti) · wiki/clienti · wiki/concetti · wiki/progetti · wiki/strumenti · wiki/sintesi
-## Contesto professionale
-[DA COMPILARE: descrivi il tuo ambito professionale]
----
-
-Chiedimi il percorso esatto prima di creare i file.</p>
-      </div>
-
-      <h3>Opzione B — Crea la struttura manualmente</h3>
-      <div class="steps">
-        <div class="step">
-          <div class="step-n">1</div>
-          <div class="step-body">
-            <strong>Apri Esplora File e naviga in OneDrive</strong>
-            Crea una nuova cartella e chiamala <code>Second_Brain_Claude</code>.
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">2</div>
-          <div class="step-body">
-            <strong>Crea le sottocartelle</strong>
-            <div class="tree" style="margin-top:.7rem">
-<span style="color:#7ec8e3">Second_Brain_Claude/</span>
-│
-├── <span style="color:#76c442">CLAUDE.md</span>            <span style="color:#5f8aa8">← schema e regole per Claude</span>
-├── <span style="color:#76c442">index.md</span>             <span style="color:#5f8aa8">← catalogo pagine wiki</span>
-├── <span style="color:#76c442">log.md</span>               <span style="color:#5f8aa8">← storico operazioni</span>
-├── <span style="color:#f0a050">raw/</span>                 <span style="color:#5f8aa8">← fonti originali (immutabili)</span>
-├── <span style="color:#7ec8e3">wiki/</span>
-│   ├── <span style="color:#7ec8e3">clienti/</span>         <span style="color:#5f8aa8">← una pagina per cliente</span>
-│   ├── <span style="color:#7ec8e3">concetti/</span>        <span style="color:#5f8aa8">← metodologie, framework</span>
-│   ├── <span style="color:#7ec8e3">progetti/</span>        <span style="color:#5f8aa8">← progetti attivi e completati</span>
-│   ├── <span style="color:#7ec8e3">strumenti/</span>       <span style="color:#5f8aa8">← tool e app create</span>
-│   └── <span style="color:#7ec8e3">sintesi/</span>         <span style="color:#5f8aa8">← analisi trasversali, insight</span>
-├── <span style="color:#7ec8e3">giornaliero/</span>         <span style="color:#5f8aa8">← log sessioni YYYY-MM-DD.md</span>
-├── <span style="color:#7ec8e3">templates/</span>           <span style="color:#5f8aa8">← template per nuove pagine</span>
-└── <span style="color:#7ec8e3">_reports/</span>            <span style="color:#5f8aa8">← report LINT e CLOSE</span></div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">3</div>
-          <div class="step-body">
-            <strong>Crea i file di sistema</strong>
-            Nella cartella principale crea questi file vuoti:
-            <ul style="margin:.5rem 0 0 1.1rem; color:#444; font-size:.9rem; line-height:1.9">
-              <li><code>index.md</code> — catalogo di tutte le pagine wiki</li>
-              <li><code>CLAUDE.md</code> — schema per Claude (vedi sezione 4)</li>
-              <li><code>log.md</code> — storico cronologico delle operazioni</li>
-            </ul>
-            <div class="callout callout-tip" style="margin-top:.7rem">
-              Per creare un file <code>.md</code>: clic destro → Nuovo documento di testo → rinomina cambiando l'estensione da <code>.txt</code> a <code>.md</code>. Se non vedi le estensioni: Esplora File → Visualizza → Estensioni nomi file ✓
-            </div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-n">4</div>
-          <div class="step-body">
-            <strong>Apri il vault in Obsidian</strong>
-            Torna in Obsidian → <em>Open folder as vault</em> → seleziona <code>Second_Brain_Claude</code>. Vedrai la struttura nel pannello laterale sinistro.
-          </div>
-        </div>
-      </div>
-
-      <h3>Opzione C — Claude Code (creazione diretta, zero copia/incolla)</h3>
-
-      <div class="callout callout-info">
-        <div class="callout-title">Solo per chi ha Claude Code installato</div>
-        Claude Code (app desktop o terminale) ha accesso diretto al tuo filesystem. Crea cartelle e file senza che tu debba copiare nulla — basta incollare il prompt e confermare.
+      <div class="callout callout-cc">
+        <div class="callout-title">🤖 Automatico — niente copia/incolla</div>
+        Claude Code ha accesso diretto al filesystem. Crea cartelle e file senza che tu faccia nulla manualmente — basta incollare il prompt e confermare il percorso.
       </div>
 
       <div class="prompt-box">
-        <div class="pb-label">Prompt per Claude Code — crea vault direttamente</div>
+        <div class="pb-label">Prompt Claude Code — crea vault direttamente</div>
         <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
         <p id="prompt-cc2">Crea un vault Second Brain direttamente nel mio filesystem.
 
@@ -627,9 +539,103 @@ Una pagina = un concetto/entità. Nessuna sovrapposizione.
 Conferma il percorso prima di creare.</p>
       </div>
 
+      <h3>Opzione B — Crea la struttura con claude.ai web</h3>
+      <p>Apri <code>claude.ai</code> e incolla questo prompt. Claude crea l'intera struttura e ti chiede dove metterla.</p>
+
+      <div class="prompt-box">
+        <div class="pb-label">Prompt per Claude</div>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
+        <p id="prompt-cc">Devo creare un Second Brain vault per organizzare la mia conoscenza professionale con Obsidian e Claude.
+
+Crea questa struttura di cartelle e file nella cartella che ti indico (chiedimela prima):
+
+Second_Brain_Claude/
+├── CLAUDE.md              (vedi sotto)
+├── index.md               (contenuto: "# Index\n_Aggiornato da INGEST_\n")
+├── log.md                 (contenuto: "# Log\n_Aggiornato da CLOSE_\n")
+├── raw/                   (cartella vuota — fonti originali immutabili)
+├── wiki/
+│   ├── clienti/           (cartella vuota — una pagina per cliente)
+│   ├── concetti/          (cartella vuota — metodologie e framework)
+│   ├── progetti/          (cartella vuota — progetti attivi e completati)
+│   ├── strumenti/         (cartella vuota — tool e applicazioni create)
+│   └── sintesi/           (cartella vuota — analisi trasversali e insight)
+├── giornaliero/           (cartella vuota — log sessioni YYYY-MM-DD.md)
+├── templates/             (cartella vuota — template per nuove pagine)
+└── _reports/              (cartella vuota — report LINT e CLOSE)
+
+Per CLAUDE.md usa questo contenuto (lo personalizzerò dopo):
+---
+# Second Brain — Schema di Configurazione
+## Percorso vault
+C:\Users\[NOME]\OneDrive\Second_Brain_Claude\
+## Struttura
+raw/ (fonti) · wiki/clienti · wiki/concetti · wiki/progetti · wiki/strumenti · wiki/sintesi
+## Contesto professionale
+[DA COMPILARE: descrivi il tuo ambito professionale]
+---
+
+Chiedimi il percorso esatto prima di creare i file.</p>
+      </div>
+
+      <h3>Opzione C — Crea la struttura manualmente</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Apri Esplora File e naviga in OneDrive</strong>
+            Crea una nuova cartella e chiamala <code>Second_Brain_Claude</code>.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Crea le sottocartelle</strong>
+            <div class="tree" style="margin-top:.7rem">
+<span style="color:#7ec8e3">Second_Brain_Claude/</span>
+│
+├── <span style="color:#76c442">CLAUDE.md</span>            <span style="color:#5f8aa8">← schema e regole per Claude</span>
+├── <span style="color:#76c442">index.md</span>             <span style="color:#5f8aa8">← catalogo pagine wiki</span>
+├── <span style="color:#76c442">log.md</span>               <span style="color:#5f8aa8">← storico operazioni</span>
+├── <span style="color:#f0a050">raw/</span>                 <span style="color:#5f8aa8">← fonti originali (immutabili)</span>
+├── <span style="color:#7ec8e3">wiki/</span>
+│   ├── <span style="color:#7ec8e3">clienti/</span>         <span style="color:#5f8aa8">← una pagina per cliente</span>
+│   ├── <span style="color:#7ec8e3">concetti/</span>        <span style="color:#5f8aa8">← metodologie, framework</span>
+│   ├── <span style="color:#7ec8e3">progetti/</span>        <span style="color:#5f8aa8">← progetti attivi e completati</span>
+│   ├── <span style="color:#7ec8e3">strumenti/</span>       <span style="color:#5f8aa8">← tool e app create</span>
+│   └── <span style="color:#7ec8e3">sintesi/</span>         <span style="color:#5f8aa8">← analisi trasversali, insight</span>
+├── <span style="color:#7ec8e3">giornaliero/</span>         <span style="color:#5f8aa8">← log sessioni YYYY-MM-DD.md</span>
+├── <span style="color:#7ec8e3">templates/</span>           <span style="color:#5f8aa8">← template per nuove pagine</span>
+└── <span style="color:#7ec8e3">_reports/</span>            <span style="color:#5f8aa8">← report LINT e CLOSE</span></div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Crea i file di sistema</strong>
+            Nella cartella principale crea questi file vuoti:
+            <ul style="margin:.5rem 0 0 1.1rem; color:#444; font-size:.9rem; line-height:1.9">
+              <li><code>index.md</code> — catalogo di tutte le pagine wiki</li>
+              <li><code>CLAUDE.md</code> — schema per Claude (vedi sezione 4)</li>
+              <li><code>log.md</code> — storico cronologico delle operazioni</li>
+            </ul>
+            <div class="callout callout-tip" style="margin-top:.7rem">
+              Per creare un file <code>.md</code>: clic destro → Nuovo documento di testo → rinomina cambiando l'estensione da <code>.txt</code> a <code>.md</code>. Se non vedi le estensioni: Esplora File → Visualizza → Estensioni nomi file ✓
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div class="step-body">
+            <strong>Apri il vault in Obsidian</strong>
+            Torna in Obsidian → <em>Open folder as vault</em> → seleziona <code>Second_Brain_Claude</code>. Vedrai la struttura nel pannello laterale sinistro.
+          </div>
+        </div>
+      </div>
+
       <div class="callout callout-key">
-        <div class="callout-title">raw/ è il tuo "raw"</div>
-        Ogni documento da conservare va qui, grezzo, senza preparazione. Non devi rinominarlo, categorizzarlo o aggiungere metadati. Claude lo legge durante INGEST e scrive lui le pagine in <code>wiki/</code>.
+        <div class="callout-title">raw/ è il tuo deposito grezzo</div>
+        Ogni documento da conservare va qui, senza preparazione. Non devi rinominarlo, categorizzarlo o aggiungere metadati. Claude lo legge durante INGEST e scrive lui le pagine in <code>wiki/</code>.
       </div>
     </section>
 
@@ -637,10 +643,10 @@ Conferma il percorso prima di creare.</p>
     <section id="s4">
       <div class="sec-head"><div class="sec-num">4</div><h2>Configura Claude</h2></div>
 
-      <p>Per far funzionare il sistema devi fare due cose: creare il file <code>CLAUDE.md</code> nel vault (lo schema) e dire a Claude dove trovarlo.</p>
+      <p>Per far funzionare il sistema devi fare due cose: creare il file <code>CLAUDE.md</code> nel vault (lo schema) e installare la skill se usi Claude Code.</p>
 
       <h3>4.1 Crea CLAUDE.md nella root del vault</h3>
-      <p>Apri il file <code>CLAUDE.md</code> che hai creato nel passo precedente e incolla questo contenuto, <strong>personalizzando i campi tra parentesi</strong>:</p>
+      <p>Apri il file <code>CLAUDE.md</code> e incolla questo contenuto, <strong>personalizzando i campi tra parentesi</strong>:</p>
 
       <div class="prompt-box">
         <div class="pb-label">Contenuto di CLAUDE.md — personalizza i campi tra [parentesi]</div>
@@ -703,38 +709,12 @@ Più è preciso, più Claude contestualizza correttamente durante INGEST.]</p>
         <strong>Contesto professionale:</strong> descrivi in 2-3 righe il tuo lavoro e il tipo di documenti che gestirai. Claude userà questo contesto per categorizzare correttamente i documenti durante INGEST.
       </div>
 
-      <h3>4.2 Comunica a Claude dove si trova il vault</h3>
-      <p>Vai su <code>claude.ai</code> → <strong>Settings</strong> → <strong>Profile</strong> (o <em>Custom Instructions</em>) e aggiungi questo testo permanente:</p>
+      <h3>4.2 Installa la Skill (Claude Code)</h3>
 
-      <div class="prompt-box">
-        <div class="pb-label">Istruzioni permanenti per claude.ai</div>
-        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
-        <p id="prompt-prefs">Ho un Second Brain vault in C:\Users\[NOME]\OneDrive\Second_Brain_Claude\
-
-Struttura: raw/ (fonti immutabili) · wiki/clienti · wiki/concetti · wiki/progetti · wiki/strumenti · wiki/sintesi · giornaliero/ · index.md · log.md
-
-Quando scrivo "ingest", "query", "lint" o "close" (o "chiudi sessione"):
-1. Leggi prima il file CLAUDE.md allegato (lo schema del vault)
-2. Esegui l'operazione richiesta sui file allegati
-3. Restituisci i file aggiornati da copiare nel vault
-
-Il file CLAUDE.md contiene struttura, convenzioni e contesto professionale.</p>
+      <div class="callout callout-cc">
+        <div class="callout-title">🤖 Solo Claude Code — ma cambia tutto</div>
+        Una skill è un file <code>SKILL.md</code> salvato in <code>~\.claude\skills\[nome]\</code>. Claude Code lo rileva automaticamente quando riconosce le parole trigger — <strong>senza allegare file, senza ripetere istruzioni, senza copia/incolla</strong>. Installala una volta sola.
       </div>
-
-      <div class="callout callout-warn">
-        <div class="callout-title">Quale metodo usare?</div>
-        <strong>Se usi claude.ai (browser):</strong> vai su <strong>Settings → Profile</strong>, trova il campo <em>"Quali preferenze personali dovrebbe considerare Claude nelle risposte?"</em> e incolla il testo sopra. Le istruzioni si applicano automaticamente ad ogni nuova conversazione.<br><br>
-        <strong>Se usi Claude Code (app desktop/terminale):</strong> installa la skill — vedi sezione 4.3 qui sotto. Una volta installata, i trigger funzionano in automatico senza configurare nulla altro.
-      </div>
-
-      <h3>4.3 Installa la Skill (solo Claude Code)</h3>
-
-      <div class="callout callout-info">
-        <div class="callout-title">Cos'è una skill in Claude Code</div>
-        Una skill è un file <code>SKILL.md</code> salvato in <code>~\.claude\skills\[nome]\</code>. Claude Code lo rileva automaticamente e lo carica in memoria quando riconosce le parole trigger nella chat — senza che tu debba allegare file o ripetere istruzioni.
-      </div>
-
-      <p>Incolla questo prompt in Claude Code per installare la skill direttamente:</p>
 
       <div class="prompt-box">
         <div class="pb-label">Prompt Claude Code — installa skill second-brain-vault</div>
@@ -766,7 +746,7 @@ ingest · query · lint · close · "chiudi sessione" · "processa questa fonte"
 File sistema: index.md · log.md · CLAUDE.md
 
 ## INGEST
-1. Leggi i file in raw/ (o allegati)
+1. Leggi i file in raw/ direttamente dal filesystem
 2. Discuti brevemente i punti chiave con l'utente
 3. Crea/aggiorna pagine in wiki/ (categoria MECE corretta)
 4. Aggiorna index.md e log.md
@@ -816,32 +796,81 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
         <div class="callout-title">Verifica installazione</div>
         Dopo aver creato il file, scrivi in Claude Code: <code>second-brain lint</code> — se la skill è attiva vedrai una risposta contestualizzata al vault, non una risposta generica.
       </div>
+
+      <h3>4.3 Istruzioni permanenti per claude.ai web (solo se non usi Claude Code)</h3>
+      <p>Se preferisci usare claude.ai nel browser, vai su <strong>Settings → Profile</strong> e aggiungi:</p>
+
+      <div class="prompt-box">
+        <div class="pb-label">Istruzioni permanenti per claude.ai</div>
+        <button class="copy-btn" onclick="copyPrompt(this)">Copia</button>
+        <p id="prompt-prefs">Ho un Second Brain vault in C:\Users\[NOME]\OneDrive\Second_Brain_Claude\
+
+Struttura: raw/ (fonti immutabili) · wiki/clienti · wiki/concetti · wiki/progetti · wiki/strumenti · wiki/sintesi · giornaliero/ · index.md · log.md
+
+Quando scrivo "ingest", "query", "lint" o "close" (o "chiudi sessione"):
+1. Leggi prima il file CLAUDE.md allegato (lo schema del vault)
+2. Esegui l'operazione richiesta sui file allegati
+3. Restituisci i file aggiornati da copiare nel vault
+
+Il file CLAUDE.md contiene struttura, convenzioni e contesto professionale.</p>
+      </div>
     </section>
 
     <!-- S5 -->
     <section id="s5">
       <div class="sec-head"><div class="sec-num">5</div><h2>Come Claude accede al Vault</h2></div>
 
+      <div class="callout callout-cc">
+        <div class="callout-title">🤖 Hai Claude Code? Il flusso è completamente automatico</div>
+        Claude Code ha accesso diretto al tuo filesystem. <strong>Non devi allegare nessun file, non devi copiare nessun output.</strong> Scrivi il comando — Claude legge i file, li aggiorna, li salva. Apri Obsidian e trovi tutto già fatto.<br><br>
+        Workflow completo: <strong>butti file in raw/ → scrivi "ingest" → apri Obsidian</strong>. Fine.
+      </div>
+
       <div class="callout callout-info">
-        <div class="callout-title">Chiarimento fondamentale</div>
-        Claude non si connette a Obsidian. Obsidian è solo il tuo visualizzatore locale. Claude legge i file <code>.md</code> quando li alleghi nella chat — oppure, se usi Claude Code (l'app desktop/terminale), li legge direttamente dal filesystem senza che tu alleghi nulla.
+        <div class="callout-title">Chiarimento su Obsidian</div>
+        Claude non si connette a Obsidian. Obsidian è solo il visualizzatore. Claude scrive i file <code>.md</code> sul disco (direttamente con Claude Code, oppure restituendoli come testo con claude.ai web). Obsidian li mostra — automaticamente, senza che tu faccia nulla in Obsidian.
       </div>
 
       <table>
-        <tr><th>Modalità</th><th>Come funziona</th><th>Quando usarla</th></tr>
+        <tr><th>Modalità</th><th>Come funziona</th><th>Sforzo richiesto</th></tr>
         <tr>
-          <td><strong>claude.ai (browser)</strong></td>
-          <td>Alleghi i file <code>.md</code> tramite il pulsante 📎. Puoi selezionare più file insieme con Ctrl+clic. Claude restituisce i file aggiornati da copiare nel vault.</td>
-          <td>Per la maggior parte delle operazioni quotidiane: INGEST di nuovi documenti, domande on demand, analisi spot.</td>
+          <td><strong>🤖 Claude Code</strong> (consigliato)</td>
+          <td>Accesso diretto al filesystem. Legge e scrive i file del vault in autonomia.</td>
+          <td><strong>Zero</strong> — scrivi il comando, il resto è automatico.</td>
         </tr>
         <tr>
-          <td><strong>Claude Code (app desktop)</strong></td>
-          <td>Claude ha accesso diretto al filesystem del tuo PC. Legge e scrive i file del vault senza che tu alleghi nulla. Più potente e veloce.</td>
-          <td>Per INGEST massivo, LINT automatico, operazioni di manutenzione su molti file. Richiede installazione separata da <code>claude.ai/code</code>.</td>
+          <td><strong>✋ claude.ai web</strong></td>
+          <td>Alleghi i file manualmente con 📎. Claude restituisce il testo aggiornato da incollare nei file.</td>
+          <td>Medio — allega file, copia output, incolla nei file del vault.</td>
         </tr>
       </table>
 
-      <h3>Procedura standard per claude.ai web (il 90% dei casi)</h3>
+      <h3>Procedura con Claude Code (automatica)</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body">
+            <strong>Copia i file in raw/</strong>
+            Qualsiasi formato — html, pdf, txt, csv, docx. Nessuna preparazione.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body">
+            <strong>Apri Claude Code e scrivi il comando</strong>
+            Es: <code>second-brain ingest</code> — la skill fa il resto.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body">
+            <strong>Apri Obsidian</strong>
+            Le pagine wiki sono già aggiornate. Niente da copiare, niente da incollare.
+          </div>
+        </div>
+      </div>
+
+      <h3>Procedura con claude.ai web (manuale)</h3>
       <div class="steps">
         <div class="step">
           <div class="step-n">1</div>
@@ -854,10 +883,10 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
           <div class="step-body">
             <strong>Allega i file necessari</strong>
             Clicca 📎 e seleziona i file da <code>Second_Brain_Claude/</code>:<br>
-            — Per INGEST: allega i nuovi file da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code><br>
-            — Per QUERY: allega <code>CLAUDE.md</code> + <code>index.md</code> + i file wiki pertinenti<br>
-            — Per LINT: allega <code>CLAUDE.md</code> + tutti i file <code>.md</code> di <code>wiki/</code><br>
-            — Per CLOSE: allega <code>CLAUDE.md</code> + <code>index.md</code> + <code>log.md</code>
+            — Per INGEST: nuovi file da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code><br>
+            — Per QUERY: <code>CLAUDE.md</code> + <code>index.md</code> + file wiki pertinenti<br>
+            — Per LINT: <code>CLAUDE.md</code> + tutti i file <code>.md</code> di <code>wiki/</code><br>
+            — Per CLOSE: <code>CLAUDE.md</code> + <code>index.md</code> + <code>log.md</code>
           </div>
         </div>
         <div class="step">
@@ -871,14 +900,14 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
           <div class="step-n">4</div>
           <div class="step-body">
             <strong>Copia i file aggiornati nel vault</strong>
-            Claude restituisce il contenuto aggiornato di <code>_index.md</code> e le pagine wiki. Aprili in Obsidian (o con un editor di testo) e sostituisci il contenuto.
+            Claude restituisce il testo delle pagine aggiornate. Aprile con Notepad (o Obsidian), incolla il contenuto, salva. Obsidian si aggiorna automaticamente.
           </div>
         </div>
       </div>
 
       <div class="callout callout-key">
         <div class="callout-title">Il vault È la memoria tra sessioni</div>
-        Claude non ricorda le sessioni precedenti. Il vault è il contesto persistente. All'inizio di ogni nuova sessione allega sempre <code>CLAUDE.md</code> + <code>index.md</code>: Claude saprà immediatamente dove siete arrivati senza che tu debba rispiegare nulla. Se vuoi aggiungere contesto su una sessione precedente, allega anche il file <code>giornaliero/YYYY-MM-DD.md</code> corrispondente.
+        Claude non ricorda le sessioni precedenti. Il vault è il contesto persistente. Con Claude Code basta aprire la sessione — legge autonomamente <code>CLAUDE.md</code> e <code>index.md</code>. Con claude.ai web, allegali sempre all'inizio.
       </div>
     </section>
 
@@ -886,16 +915,19 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
     <section id="s6">
       <div class="sec-head"><div class="sec-num">6</div><h2>INGEST · QUERY · LINT · CLOSE</h2></div>
 
-      <p>Quattro operazioni coprono il 100% del workflow sul vault. Si attivano scrivendo il trigger nella chat con i file allegati.</p>
+      <p>Quattro operazioni coprono il 100% del workflow sul vault.</p>
 
       <h3>INGEST — Integra nuovi documenti nella wiki</h3>
+      <div class="op-badges">
+        <span class="badge badge-auto">🤖 Claude Code — automatico</span>
+        <span class="badge badge-manual">✋ claude.ai web — allega raw/ + CLAUDE.md + index.md</span>
+      </div>
       <div class="card">
         <div class="card-title">Cosa fa</div>
-        <p style="margin:0; font-size:.91rem">Legge i nuovi file in <code>01-Inputs-Inbox</code>, ne estrae le informazioni chiave, le integra nelle pagine wiki esistenti (aggiornando entità, concetti, sintesi), assegna una categoria MECE, normalizza il frontmatter, aggiorna <code>_index.md</code> e <code>_tags-index.md</code>. Un singolo documento può toccare 5-15 pagine wiki.</p>
+        <p style="margin:0; font-size:.91rem">Legge i nuovi file in <code>raw/</code>, ne estrae le informazioni chiave, le integra nelle pagine wiki esistenti (aggiornando entità, concetti, sintesi), assegna una categoria MECE, normalizza il frontmatter, aggiorna <code>index.md</code> e <code>log.md</code>. Un singolo documento può toccare 5-15 pagine wiki.</p>
       </div>
 
       <p><strong>Trigger:</strong> <code>ingest</code> (o "processa questa fonte")</p>
-      <p><strong>Allega:</strong> file nuovi da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code></p>
 
       <div class="card" style="margin-top:.8rem">
         <div class="card-title">Esempio output</div>
@@ -918,13 +950,16 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
       </div>
 
       <h3>QUERY — Domanda al wiki</h3>
+      <div class="op-badges">
+        <span class="badge badge-auto">🤖 Claude Code — automatico</span>
+        <span class="badge badge-manual">✋ claude.ai web — allega CLAUDE.md + index.md + pagine rilevanti</span>
+      </div>
       <div class="card">
         <div class="card-title">Cosa fa</div>
         <p style="margin:0; font-size:.91rem">Risponde a domande leggendo <code>index.md</code> e le pagine wiki rilevanti. Cita sempre le pagine usate con link <code>[[]]</code>. Se la risposta è sufficientemente ricca, la salva automaticamente come nuova pagina in <code>wiki/sintesi/</code>.</p>
       </div>
 
       <p><strong>Trigger:</strong> qualsiasi domanda libera (es. <em>"Quali clienti hanno problemi ricorrenti di liquidità?"</em>)</p>
-      <p><strong>Allega:</strong> <code>CLAUDE.md</code> + <code>index.md</code> + le pagine wiki pertinenti</p>
 
       <div class="hl" style="margin-top:.8rem">
         <em>"Tra i file del vault, quali clienti hanno problemi ricorrenti di liquidità?"</em><br><br>
@@ -933,13 +968,16 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
       </div>
 
       <h3>LINT — Diagnostica settimanale</h3>
+      <div class="op-badges">
+        <span class="badge badge-auto">🤖 Claude Code — automatico</span>
+        <span class="badge badge-manual">✋ claude.ai web — allega CLAUDE.md + tutti i .md di wiki/</span>
+      </div>
       <div class="card">
         <div class="card-title">Cosa fa</div>
         <p style="margin:0; font-size:.91rem">Scansiona il vault e trova: pagine orfane (senza link in entrata), link a file inesistenti, duplicati (titoli simili oltre il 75%), file senza categoria, concetti citati più volte ma senza pagina dedicata. Produce un report in <code>_reports/</code>.</p>
       </div>
 
       <p><strong>Trigger:</strong> <code>lint</code> (o "controllo salute")</p>
-      <p><strong>Allega:</strong> <code>CLAUDE.md</code> + tutti i file <code>.md</code> di <code>wiki/</code></p>
 
       <div class="card" style="margin-top:.8rem">
         <div class="card-title">Esempio output</div>
@@ -957,19 +995,22 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
 
 💡 Concetti frequenti senza pagina dedicata:
    - "cash flow stagionale" (citato in 4 file)
-   → Suggerisco di creare 03-Resources/Cash-Flow-Stagionale.md
+   → Suggerisco di creare wiki/concetti/cash_flow_stagionale.md
 
 <span class="g">✅ Link rotti: 0</span></pre>
       </div>
 
-      <h3>CLOSE — Report mensile e log</h3>
+      <h3>CLOSE — Fine sessione e log</h3>
+      <div class="op-badges">
+        <span class="badge badge-auto">🤖 Claude Code — automatico</span>
+        <span class="badge badge-manual">✋ claude.ai web — allega CLAUDE.md + index.md + log.md</span>
+      </div>
       <div class="card">
         <div class="card-title">Cosa fa</div>
         <p style="margin:0; font-size:.91rem">Genera un report di salute del vault (health score, statistiche, file inattivi da oltre 90 giorni, raccomandazioni), aggiorna <code>log.md</code> con un record cronologico permanente.</p>
       </div>
 
       <p><strong>Trigger:</strong> <code>close</code> · <code>chiudi sessione</code> · <code>grazie, abbiamo finito</code></p>
-      <p><strong>Allega:</strong> <code>CLAUDE.md</code> + <code>index.md</code> + <code>log.md</code></p>
       <p><strong>Output:</strong> crea <code>giornaliero/YYYY-MM-DD.md</code> con riepilogo sessione, pagine toccate, insight emersi, task aperti. Aggiorna <code>log.md</code>.</p>
 
       <div class="callout callout-tip">
@@ -982,43 +1023,69 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
     <section id="s7">
       <div class="sec-head"><div class="sec-num">7</div><h2>Flusso quotidiano</h2></div>
 
+      <h3>Con Claude Code (consigliato)</h3>
       <table>
         <tr><th>Frequenza</th><th>Azione</th><th>Tempo</th></tr>
         <tr>
           <td><strong>Ogni volta</strong></td>
-          <td>Hai un documento? Buttalo grezzo in <code>01-Inputs-Inbox</code> — qualsiasi formato (html, txt, pdf, csv…)</td>
+          <td>Hai un documento? Buttalo grezzo in <code>raw/</code> — qualsiasi formato</td>
           <td>30 sec</td>
         </tr>
         <tr>
           <td><strong>2-3 volte/settimana</strong></td>
-          <td>Allega i nuovi file da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code> → scrivi <code>ingest</code></td>
+          <td>Apri Claude Code → scrivi <code>ingest</code> → apri Obsidian</td>
+          <td>2 min</td>
+        </tr>
+        <tr>
+          <td><strong>On demand</strong></td>
+          <td>Scrivi la domanda direttamente in Claude Code (QUERY automatica)</td>
+          <td>1 min</td>
+        </tr>
+        <tr>
+          <td><strong>Settimanale</strong></td>
+          <td>Scrivi <code>lint</code> — Claude trova e segnala i problemi, aggiorna i report</td>
           <td>5 min</td>
+        </tr>
+        <tr>
+          <td><strong>Fine sessione</strong></td>
+          <td>Scrivi <code>chiudi sessione</code> — Claude crea il log giornaliero e aggiorna log.md</td>
+          <td>1 min</td>
+        </tr>
+      </table>
+
+      <h3>Con claude.ai web (manuale)</h3>
+      <table>
+        <tr><th>Frequenza</th><th>Azione</th><th>Tempo</th></tr>
+        <tr>
+          <td><strong>Ogni volta</strong></td>
+          <td>Hai un documento? Buttalo grezzo in <code>raw/</code> — qualsiasi formato</td>
+          <td>30 sec</td>
+        </tr>
+        <tr>
+          <td><strong>2-3 volte/settimana</strong></td>
+          <td>Allega file da <code>raw/</code> + <code>CLAUDE.md</code> + <code>index.md</code> → scrivi <code>ingest</code> → copia i file restituiti in <code>wiki/</code></td>
+          <td>10 min</td>
         </tr>
         <tr>
           <td><strong>On demand</strong></td>
           <td>Allega <code>index.md</code> + pagine rilevanti → fai la domanda (QUERY)</td>
-          <td>2 min</td>
+          <td>3 min</td>
         </tr>
         <tr>
           <td><strong>Settimanale</strong></td>
-          <td>Allega wiki/ → scrivi <code>lint</code> — applica i suggerimenti evidenti</td>
-          <td>10 min</td>
+          <td>Allega tutti i <code>.md</code> di <code>wiki/</code> → scrivi <code>lint</code> → applica i suggerimenti</td>
+          <td>15 min</td>
         </tr>
         <tr>
           <td><strong>Fine sessione</strong></td>
-          <td>Scrivi <code>chiudi sessione</code> → Claude crea il log giornaliero</td>
-          <td>1 min</td>
-        </tr>
-        <tr>
-          <td><strong>Mensile</strong></td>
-          <td>Scrivi <code>close</code> — health report completo e log.md</td>
-          <td>5 min</td>
+          <td>Scrivi <code>chiudi sessione</code> → copia il log giornaliero restituito in <code>giornaliero/</code></td>
+          <td>3 min</td>
         </tr>
       </table>
 
       <div class="callout callout-key">
         <div class="callout-title">Regola d'oro</div>
-        Non perfezionare i file prima di metterli nel vault. Buttali grezzi in <code>01-Inputs-Inbox</code>. Claude li elabora così come sono — questa è la differenza rispetto a un sistema di archiviazione tradizionale.
+        Non perfezionare i file prima di metterli nel vault. Buttali grezzi in <code>raw/</code>. Claude li elabora così come sono — questa è la differenza rispetto a un sistema di archiviazione tradizionale.
       </div>
 
       <h3>Cosa aspettarsi nel tempo</h3>
@@ -1046,7 +1113,7 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
     <section id="s8">
       <div class="sec-head"><div class="sec-num">8</div><h2>Checklist Setup</h2></div>
 
-      <h3>Fase 1 — Setup tecnico (1 ora)</h3>
+      <h3>Fase 1 — Setup tecnico (30 min con Claude Code / 1 ora manuale)</h3>
       <ul class="checklist">
         <li><input type="checkbox"><span>Verifica di avere un account claude.ai attivo</span></li>
         <li><input type="checkbox"><span>Scarica e installa Obsidian da <strong>obsidian.md</strong></span></li>
@@ -1055,34 +1122,31 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
         <li><input type="checkbox"><span>Crea i 3 file di sistema nella root: <code>index.md</code>, <code>CLAUDE.md</code>, <code>log.md</code></span></li>
         <li><input type="checkbox"><span>Compila <code>CLAUDE.md</code>: personalizza percorso vault e sezione "Contesto professionale"</span></li>
         <li><input type="checkbox"><span>Apri il vault in Obsidian → <em>Open folder as vault</em></span></li>
-        <li><input type="checkbox"><span>Aggiungi le istruzioni permanenti nel campo "Quali preferenze personali..." di claude.ai Settings → Profile</span></li>
+        <li><input type="checkbox"><span><strong>Se usi Claude Code:</strong> installa la skill second-brain-vault (sezione 4.2)</span></li>
+        <li><input type="checkbox"><span><strong>Se usi claude.ai web:</strong> aggiungi le istruzioni permanenti in Settings → Profile (sezione 4.3)</span></li>
       </ul>
 
-      <h3>Fase 2 — Primo INGEST (30 minuti)</h3>
+      <h3>Fase 2 — Primo INGEST</h3>
       <ul class="checklist">
-        <li><input type="checkbox"><span>Copia 3-5 documenti esistenti in <code>raw/</code> — qualsiasi formato (html, txt, pdf, csv…)</span></li>
-        <li><input type="checkbox"><span>Allega i file + <code>CLAUDE.md</code> + <code>index.md</code> a Claude</span></li>
-        <li><input type="checkbox"><span>Scrivi <code>ingest</code> e invia</span></li>
-        <li><input type="checkbox"><span>Copia i file restituiti da Claude nelle cartelle <code>wiki/</code> appropriate</span></li>
+        <li><input type="checkbox"><span>Copia 3-5 documenti esistenti in <code>raw/</code> — qualsiasi formato</span></li>
+        <li><input type="checkbox"><span><strong>Claude Code:</strong> scrivi <code>ingest</code> e aspetta · <strong>claude.ai web:</strong> allega i file + <code>CLAUDE.md</code> + <code>index.md</code> → scrivi <code>ingest</code> → copia l'output in <code>wiki/</code></span></li>
         <li><input type="checkbox"><span>Verifica in Obsidian che le pagine siano visibili e collegate</span></li>
       </ul>
 
-      <h3>Fase 3 — Prima LINT (15 minuti)</h3>
+      <h3>Fase 3 — Prima LINT</h3>
       <ul class="checklist">
-        <li><input type="checkbox"><span>Allega <code>CLAUDE.md</code> + tutti i file <code>.md</code> di <code>wiki/</code> a Claude</span></li>
-        <li><input type="checkbox"><span>Scrivi <code>lint</code> e invia</span></li>
-        <li><input type="checkbox"><span>Leggi il report e applica i suggerimenti più evidenti</span></li>
-        <li><input type="checkbox"><span>Salva il report in <code>_reports/lint-report-YYYY-MM-DD.md</code></span></li>
+        <li><input type="checkbox"><span><strong>Claude Code:</strong> scrivi <code>lint</code> · <strong>claude.ai web:</strong> allega <code>CLAUDE.md</code> + tutti i <code>.md</code> di <code>wiki/</code> → scrivi <code>lint</code></span></li>
+        <li><input type="checkbox"><span>Leggi il report in <code>_reports/</code> e applica i suggerimenti più evidenti</span></li>
       </ul>
 
       <div class="callout callout-tip">
         <div class="callout-title">Setup completato — da qui in poi è routine</div>
-        Butti file → INGEST 2-3 volte a settimana → LINT settimanale → domande on demand. Il vault diventa più ricco ad ogni documento. Il valore cresce con il tempo.
+        Butti file in <code>raw/</code> → scrivi <code>ingest</code> → LINT settimanale → domande on demand. Il vault diventa più ricco ad ogni documento. Il valore cresce con il tempo.
       </div>
     </section>
 
     <footer>
-      Second Brain con Obsidian e Claude · Guida Operativa v3.1 · 2026
+      Second Brain con Obsidian e Claude · Guida Operativa v3.2 · 2026
     </footer>
 
   </main>
@@ -1116,7 +1180,7 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
   sections.forEach(s => io.observe(s));
 
   document.querySelectorAll('.checklist input[type=checkbox]').forEach((cb, i) => {
-    const k = 'sb31_cb_' + i;
+    const k = 'sb32_cb_' + i;
     cb.checked = localStorage.getItem(k) === '1';
     const li = cb.closest('li');
     if (cb.checked) li.classList.add('done');
@@ -1136,4 +1200,4 @@ Crea la cartella se non esiste. Conferma il percorso prima.</p>
   }
 </script>
 </body>
-</html>
+  </html>
